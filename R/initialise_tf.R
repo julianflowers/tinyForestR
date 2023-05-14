@@ -15,7 +15,7 @@
 
 
 
-initialize_tf <- function(){
+initialise_tf <- function(){
 
   require(reticulate); require(dplyr)
 
