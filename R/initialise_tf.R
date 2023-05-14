@@ -19,6 +19,7 @@ initialize_tf <- function(){
 
   require(reticulate); require(dplyr)
 
+  virtualenv_remove("tinyforest")
   virtualenv_create("tinyforest")
   Sys.setenv(RETICULATE_PYTHON = "/Users/julianflowers/.virtualenvs/tinyforest/bin/python")
   use_virtualenv("tinyforest")
