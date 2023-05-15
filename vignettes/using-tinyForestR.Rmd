@@ -1,0 +1,145 @@
+---
+title: "How to use the tinyForestR pacakge"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to use the tinyForestR pacakge}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE, 
+  cache = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 6
+)
+```
+
+## What is the `tinyForestR` package?
+
+`tinyForestR` is a set of tools designed to extract, manipulate and analyse data relevant to the location of Tiny Forests in the UK.
+
+Specifically it extracts and processes landcover and biodiversity data from a range of sources for a given area around Tiny Forest locations, and a set of tools for analysing citizen science data derived directly from Tiny Forests.
+
+## Getting started
+
+The package is hosted on Github and is a work in progress. It can be installed by running `devtools::install_github("julianflowers/tinyForestR")`.
+
+The package makes use of a number of Application Programming Interfaces (APIs) some of which require API keys which will need to be applied for separately.
+
+It also uses a range of Python packages to access some datasets (in some cases Python packages are better developed than R). For this reason the first step is to run `initialise_tf()` to intialise the package.
+
+This:
+
+-   Loads `reticulate` which R uses to talk to Python
+
+-   Sets up a Python virtual environment (VE) called `tinyforest`, and ensures R uses the correct version of Python by specifying the `RETICULATE_PYTHON` environment variable. It may be necessary to restart R to make sure R correctly uses this.
+
+-   You will be asked if you want to remove the `tinyforest` environment. Say "no" unless you have a previous installation and are having trouble. It will create a clean install of the VE.
+
+-   Installs a number of Python packages to the `tinyforest` environment. These include
+
+    -   `earthengine-api` which enables access to Google Earth Engine (GEE)
+
+    -   `geemap` - a set of added value tools to extract and manipulate GEE data
+
+    -   `osdatahub` - access to Ordnance Survey National Geographic Database data.
+
+-   Imports the relevant modules for use in other packages
+
+### Install and initialise
+
+```{r setup}
+devtools::install_github("julianflowers/tinyForestR")
+library(tinyForestR)
+
+initialise_tf()
+```
+
+## Load Tiny Forest data
+
+The next step is to load Tiny Forest (TF) data. Because this only exists in a series of web pages the `get_tf_data` function identifies the relevant pages and iterates over them to extract name, id, location, area, planters, and types of tree planted (as a list colums), for those TFs planted at the time of extraction. It does include TFs planted outside the UK. The function takes about 30 seconds to iterate over all the relevant pages.
+
+```{r get-tf-data}
+
+tf_data <- get_tf_data()
+```
+
+Once the data is loaded we can save it as a csv file and get some high level information on planting, timings, size and so on.
+
+```{r tf-head}
+tf_data |>
+  head() |>
+  unnest("trees")
+```
+
+As of `r today()` there are `r nrow(tf_data)` planted TFs.
+
+```{r tf-stats, fig.height=6, fig.width=8}
+
+needs(patchwork)
+
+## annual planting
+
+tf_year <- tf_data |>
+  mutate(year = year(date)) |>
+  count(year) |>
+  ggplot(aes(year, n)) +
+  geom_col() +
+  labs(title = "TFs planted per year")
+
+## area distribution
+
+tf_area <- tf_data |>
+  mutate(year = year(date)) |>
+  ggplot(aes(factor(year), area)) +
+  geom_boxplot() +
+  labs(title = "TF area year")
+
+tf_trees <- tf_data |>
+  group_by(tf_id) |>
+  mutate(n_trees = map(trees, length)) |>
+  unnest("n_trees") |>
+  ggplot() +
+  geom_histogram(aes(n_trees)) +
+  labs(title = "Distribution of tree richness")
+
+tf_year + tf_area + tf_trees
+
+
+```
+
+## Locations 
+
+It is now straightforward to map locations of TFs using `sf` and `mapview`.
+
+```{r map-location}
+
+tf_data |>
+  select(-trees) |>
+  sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
+  mapview(zcol = "area")
+
+```
+
+## Tree species
+
+We can also look at planting frequency for different tree species.
+
+```{r fig.height=6}
+
+tf_data |>
+  unnest("trees") |>
+  ungroup() |>
+  count(trees, sort = TRUE) |>
+  filter(n > 1) |>
+  ggplot() +
+  geom_col(aes(n, reorder(trees, n))) +
+  labs(y = "")
+
+```
+
