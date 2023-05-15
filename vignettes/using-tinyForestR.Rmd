@@ -113,7 +113,7 @@ tf_year + tf_area + tf_trees
 
 ```
 
-## Locations 
+## Locations
 
 It is now straightforward to map locations of TFs using `sf` and `mapview`.
 
@@ -144,14 +144,16 @@ tf_data |>
 
 ```
 
-## Biodiversity data
+## [^1]Biodiversity data
+
+The `get_nbn_buffer` downloads occurrence data from the NBN Atlas in a set buffer around a given longitude and latitude. For example we can download 10000 records around lat=51.777889, lon=-1.469139 (Witney TF).
 
 ```{r biodiversity-data}
 
-nbn_data <- tinyForestR::nbn
+nbn_data <- tinyForestR::get_nbn_buffer(tf_data$lon[1], tf_data$lat[1], n = 10000)
 
-
+nbn_data
 
 ```
 
-
+[^1]: Note this sometimes times out depending on traffic on the NBN Atlas webservice

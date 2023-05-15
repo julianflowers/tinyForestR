@@ -26,3 +26,6 @@ ggmap
 myScrapers
 httr
 patchwork
+rgee
+jsonlite
+tictoc

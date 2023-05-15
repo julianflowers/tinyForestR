@@ -26,15 +26,12 @@ initialise_tf <- function(){
   Sys.setenv(RETICULATE_PYTHON = "/Users/julianflowers/.virtualenvs/tinyforest/bin/python")
   use_virtualenv("tinyforest")
 
-  py_install(c("earthengine-api", "geemap", "osdatahub"),  pip = TRUE, envname = "tinyforest")
+  py_install(c("earthengine-api", "geemap", "osdatahub", "OSGridConverter"),  pip = TRUE, envname = "tinyforest")
 
   ee <- import("ee")
   geemap <- import("geemap")
   os <- import("osdatahub")
-
-
-
-
+  osgrid <- import("OSGridConverter")
 
 }
 
