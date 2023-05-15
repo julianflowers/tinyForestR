@@ -26,7 +26,7 @@
 #' @export
 
 
-os_lat_lon_to_grid <- function(lon, lat){
+os_lat_lon_to_grid <- function(lat, lon){
 
   require(reticulate); require(tidyverse)
   #virtualenv_remove("tinyforest")
@@ -37,9 +37,6 @@ os_lat_lon_to_grid <- function(lon, lat){
   py_install("OSGridConverter", pip = TRUE, envname = "tinyforest")
 
   osgrid <- import("OSGridConverter")
-
-  lat <- 55
-  lon <- 1
 
   grid <- osgrid$latlong2grid(lat, lon)
   r <- py_to_r(grid) |>
