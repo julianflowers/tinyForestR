@@ -166,7 +166,9 @@ library(tinyForestR)
 
 tf_data <- readr::read_csv("tf_data.csv")
 
-tinyForestR::
+grid_ref <- tinyForestR::os_lat_lon_to_grid(tf_data$lat[1], tf_data$lon[1])
+
+grid_ref$grid
 
 ```
 
