@@ -30,7 +30,7 @@ os_lat_lon_to_grid <- function(lon, lat){
 
   require(reticulate); require(tidyverse)
   virtualenv_remove("tinyforest")
-  virtualenv_create("tinyforest", packages = "PyBNG", system_site_packages = TRUE)
+  virtualenv_create("tinyforest", system_site_packages = TRUE)
   Sys.setenv(RETICULATE_PYTHON = "/Users/julianflowers/.virtualenvs/tinyforest/bin/python")
   use_virtualenv("tinyforest")
 
