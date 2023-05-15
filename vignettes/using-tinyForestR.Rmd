@@ -144,16 +144,26 @@ tf_data |>
 
 ```
 
-## [^1]Biodiversity data
+## Biodiversity data
 
-The `get_nbn_buffer` downloads occurrence data from the NBN Atlas in a set buffer around a given longitude and latitude. For example we can download 10000 records around lat=51.777889, lon=-1.469139 (Witney TF).
+The `get_nbn_buffer` downloads occurrence data from the NBN Atlas in a set buffer around a given longitude and latitude. For example we can download 10000 records around lat=51.777889, lon=-1.469139 (Witney TF).[^1]
 
 ```{r biodiversity-data}
 
 nbn_data <- tinyForestR::get_nbn_buffer(tf_data$lon[1], tf_data$lat[1], n = 10000)
 
-nbn_data
+nbn_data |>
+  head()
 
 ```
 
-[^1]: Note this sometimes times out depending on traffic on the NBN Atlas webservice
+```{r}
+
+
+
+
+```
+
+I have also included functions to extract data for the 2020 Botanic Society of Britain and Ireland survey. This is publicly available from for UK National Grid 1k hectads. This requires conversion of lat-longs to UK grids. The
+
+[^1]: Note this may sometimes time out depending on traffic on the NBN Atlas webservice
