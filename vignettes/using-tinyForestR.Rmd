@@ -164,8 +164,8 @@ nbn_data |>
 
 tf_data <- readr::read_csv("tf_data.csv")
 
-lat <- tf_data$lat[6]
-lon <- tf_data$lon[6]
+lat <- tf_data$lat[2]
+lon <- tf_data$lon[2]
 
 grid_ref <- tinyForestR::os_lat_lon_to_grid(lat = lat, lon = lon)
 
@@ -177,7 +177,7 @@ I have also included functions to extract data for the 2020 Botanic Society of B
 
 ```{r}
 
-bsbi_data <- get_bsbi_data(grid_ref = grid_ref$grid)
+bsbi_data <- tinyForestR::get_bsbi_data(grid_ref = grid_ref$grid)
 
 test |>
   enframe() |>
