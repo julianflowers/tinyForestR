@@ -136,10 +136,22 @@ tf_data |>
   unnest("trees") |>
   ungroup() |>
   count(trees, sort = TRUE) |>
-  filter(n > 1) |>
+  top_n(25) |>
   ggplot() +
   geom_col(aes(n, reorder(trees, n))) +
-  labs(y = "")
+  labs(y = "", 
+       title = "25 commonest tree species planted")
 
 ```
+
+## Biodiversity data
+
+```{r biodiversity-data}
+
+nbn_data <- tinyForestR::
+
+
+
+```
+
 
