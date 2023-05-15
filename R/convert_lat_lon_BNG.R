@@ -46,3 +46,4 @@ os_lat_lon_to_grid <- function(lat, lon){
   out <- list(grid = r)
 
 }
+
