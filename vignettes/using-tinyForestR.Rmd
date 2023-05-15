@@ -148,7 +148,7 @@ tf_data |>
 
 ```{r biodiversity-data}
 
-nbn_data <- tinyForestR::
+nbn_data <- tinyForestR::nbn
 
 
 
