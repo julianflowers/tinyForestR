@@ -14,7 +14,7 @@
 #'  \item\code{map}: an interactive map generated using the queried data,
 #'  \item\code{tiers}: an sf object containing the tier B land cover information.}
 #'
-#' @details Requires the OS Data Hub API key and needed packages to run (tidyverse, reticulate, mapview, sf, tictoc, colourspace, leaf#' let).
+#' @details Requires the OS Data Hub API key and needed packages to run (tidyverse, reticulate, mapview, sf, tictoc, colourspace, leaflet).
 #'
 #' @import needs
 #' @import tidyverse
