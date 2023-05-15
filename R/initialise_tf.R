@@ -18,6 +18,8 @@
 initialise_tf <- function(){
 
   require(reticulate); require(dplyr)
+  library(needs)
+  needs(tidyverse, rgee)
 
   virtualenv_remove("tinyforest")
   virtualenv_create("tinyforest")
