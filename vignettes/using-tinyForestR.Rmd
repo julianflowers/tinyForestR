@@ -54,7 +54,7 @@ This:
 ### Install and initialise
 
 ```{r setup}
-devtools::install_github("julianflowers/tinyForestR")
+devtools::install_github("julianflowers/tinyForestR", force = TRUE)
 library(tinyForestR)
 
 initialise_tf()
@@ -62,11 +62,14 @@ initialise_tf()
 
 ## Load Tiny Forest data
 
-The next step is to load Tiny Forest (TF) data. Because this only exists in a series of web pages the `get_tf_data` function identifies the relevant pages and iterates over them to extract name, id, location, area, planters, and types of tree planted (as a list colums), for those TFs planted at the time of extraction. It does include TFs planted outside the UK. The function takes about 30 seconds to iterate over all the relevant pages.
+The next step is to load Tiny Forest (TF) data. Because this only exists in a series of web pages the `get_tf_data` function identifies the relevant pages and iterates over them to extract name, id, location, area, planters, and types of tree planted (as a list column), for those TFs planted at the time of extraction. It does include TFs planted outside the UK. The function takes about 30 seconds to iterate over all the relevant pages.
 
 ```{r get-tf-data}
 
 tf_data <- get_tf_data()
+
+tf_data |>
+  write_csv("tf_data.csv")
 ```
 
 Once the data is loaded we can save it as a csv file and get some high level information on planting, timings, size and so on.
@@ -159,11 +162,14 @@ nbn_data |>
 
 ```{r}
 
+library(tinyForestR)
 
+tf_data <- readr::read_csv("tf_data.csv")
 
+tinyForestR::
 
 ```
 
-I have also included functions to extract data for the 2020 Botanic Society of Britain and Ireland survey. This is publicly available from for UK National Grid 1k hectads. This requires conversion of lat-longs to UK grids. The
+I have also included functions to extract data for the 2020 Botanic Society of Britain and Ireland survey. This is publicly available from for UK National Grid 1k hectads. This requires conversion of lat-longs to UK grids. For
 
 [^1]: Note this may sometimes time out depending on traffic on the NBN Atlas webservice
