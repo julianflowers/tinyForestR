@@ -55,7 +55,7 @@ This:
 
 ```{r setup}
 devtools::install_github("julianflowers/tinyForestR", force = TRUE)
-library(tinyForestR)
+doculibrary(tinyForestR)
 
 initialise_tf()
 ```
@@ -162,16 +162,37 @@ nbn_data |>
 
 ```{r}
 
-library(tinyForestR)
-
 tf_data <- readr::read_csv("tf_data.csv")
 
-grid_ref <- tinyForestR::os_lat_lon_to_grid(tf_data$lat[1], tf_data$lon[1])
+lat <- tf_data$lat[6]
+lon <- tf_data$lon[6]
+
+grid_ref <- tinyForestR::os_lat_lon_to_grid(lat = lat, lon = lon)
 
 grid_ref$grid
 
 ```
 
 I have also included functions to extract data for the 2020 Botanic Society of Britain and Ireland survey. This is publicly available from for UK National Grid 1k hectads. This requires conversion of lat-longs to UK grids. For
+
+```{r}
+
+bsbi_data <- get_bsbi_data(grid_ref = grid_ref$grid)
+
+test |>
+  enframe() |>
+  unnest("value") |>
+  unnest("value") |>
+  slice(-c(168:173)) |>
+  mutate(year = str_extract(value, "20\\d{2}"),
+         value = str_remove(value, year),
+         count = str_extract(value, "\\d.*$"),
+         value = str_remove(value, count)) |>
+  separate(count, c("past", "present", sep = " ")) |>
+  select(-c(name, past)) |>
+  select(-last_col()) |>
+  pivot_wider(names_from = "value", values_from = "present", values_fn = list)
+
+```
 
 [^1]: Note this may sometimes time out depending on traffic on the NBN Atlas webservice

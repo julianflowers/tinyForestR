@@ -4,12 +4,12 @@
 \alias{os_lat_lon_to_grid}
 \title{Convert Latitude and Longitude to Ordnance Survey Grid Reference}
 \usage{
-os_lat_lon_to_grid(lon, lat)
+os_lat_lon_to_grid(lat, lon)
 }
 \arguments{
-\item{lon}{numeric vector of longitude coordinates}
-
 \item{lat}{numeric vector of latitude coordinates}
+
+\item{lon}{numeric vector of longitude coordinates}
 }
 \value{
 A list with a string containing the Ordnance Survey grid reference for
