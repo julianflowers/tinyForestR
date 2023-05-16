@@ -28,12 +28,13 @@ calc_bd_metrics <- function(df, class){
    library(vegan)
    library(tidyverse)
 
+
   tf_bd <- df |>
     setDT()
 
   # tf_bd[, tf_id := parse_number(tf)]
   # tf_bd[tf_id == tfid, ]
-  tf_bd <- tf_bd[between(year, 2010, 2023) & classs == class,]
+  tf_bd <- tf_bd[between(year, 2015, 2023) & classs == class,]
 
   species <- tf_bd[, .N, by = .(species, month)] |>
     pivot_wider(names_from = "species", values_from = "N", values_fill = 0) |>

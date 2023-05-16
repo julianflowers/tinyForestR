@@ -85,7 +85,7 @@ tf_df |>
   head() 
 ```
 
-As of `r today()` there are `r nrow(tf_data)` planted TFs.
+As of `r today()` there are `r nrow(tf_df)` planted TFs.
 
 ```{r tf-stats, fig.height=6, fig.width=8}
 
@@ -206,8 +206,8 @@ bsbi_data |>
 
 ```{r}
 
-
-
+metrics <- calc_bd_metrics(df = nbn_data$result, class = "Insecta")
+metrics
 
 ```
 
