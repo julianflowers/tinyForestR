@@ -126,6 +126,8 @@ It is now straightforward to map locations of TFs using `sf` and `mapview`.
 
 ```{r map-location}
 
+library(mapview)
+
 tf_df |>
   select(-trees) |>
   sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
@@ -197,7 +199,7 @@ bsbi_data |>
          value = str_remove(value, as.character(count)), 
          value = str_remove(value, "\\d{1,}"), 
          grid = grid_ref$grid, 
-         tf_id = tf_data$tf_id[i]) |>
+         tf_id = tf_df$tf_id[i]) |>
   arrange(value) 
 ```
 

@@ -4,12 +4,12 @@
 \alias{calc_bd_metrics}
 \title{calculate seasonal bd metrics}
 \usage{
-calc_bd_metrics(df, tfid, class)
+calc_bd_metrics(df, class)
 }
 \arguments{
-\item{tfid}{The tiny forest id for which the metrics need to be calculated}
-
 \item{class}{The class for which the metrics need to be calculated}
+
+\item{tfid}{The tiny forest id for which the metrics need to be calculated}
 }
 \value{
 A list containing the following:
