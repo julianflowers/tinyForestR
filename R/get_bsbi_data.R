@@ -3,9 +3,11 @@
 #' @param grid_ref A valid UK Ordnance Survey grid reference
 #'
 #' @return A list containing the records in the BSBI database for the given grid reference
+#'
 #' @examples
 #' get_bsbi_data("NY7250")
 #' get_bsbi_data("TQ3080")
+#' @export
 
 get_bsbi_data <- function(grid_ref){
 
