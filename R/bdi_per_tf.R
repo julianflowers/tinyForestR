@@ -22,17 +22,18 @@
 #' @export
 
 
-calc_bd_metrics <- function(df, tfid, class){
+calc_bd_metrics <- function(df, class){
 
    library(data.table)
    library(vegan)
    library(tidyverse)
 
-  tf_bd <- fread(df)
+  tf_bd <- df |>
+    setDT()
 
-  tf_bd[, tf_id := parse_number(tf)]
-  tf_bd[tf_id == tfid, ]
-  tf_bd <- tf_bd[between(year, 2010, 2023) & tf_id == tfid & classs == class,]
+  # tf_bd[, tf_id := parse_number(tf)]
+  # tf_bd[tf_id == tfid, ]
+  tf_bd <- tf_bd[between(year, 2010, 2023) & classs == class,]
 
   species <- tf_bd[, .N, by = .(species, month)] |>
     pivot_wider(names_from = "species", values_from = "N", values_fill = 0) |>
@@ -42,7 +43,7 @@ calc_bd_metrics <- function(df, tfid, class){
 
 ## total monthly observations
 
-  tf_bd_tot <- tf_bd[between(year, 2010, 2023) & tf_id == tfid,]
+  tf_bd_tot <- tf_bd[between(year, 2010, 2023),]
   obs_m <- tf_bd_tot[, .N, by = .(month)][order(month)]
 
 
@@ -62,7 +63,7 @@ calc_bd_metrics <- function(df, tfid, class){
 
 ## diversity
 
-  div <- diversity(species[-1])
+  div <- diversity(species[-1], "simpson")
 
   div <- spec_n_m |>
     bind_cols(diversity = div) |>
