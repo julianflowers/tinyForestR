@@ -54,7 +54,7 @@ This:
 ### Install and initialise
 
 ```{r setup}
-devtools::install_github("julianflowers/tinyForestR", force = TRUE)
+devtools::install_github("julianflowers/tinyForestR")
 library(tinyForestR)
 
 initialise_tf()
@@ -153,9 +153,11 @@ The `get_nbn_buffer` downloads occurrence data from the NBN Atlas in a set buffe
 
 ```{r biodiversity-data}
 
-nbn_data <- tinyForestR::get_nbn_buffer(tf_data$lon[1], tf_data$lat[1], n = 10000)
+safe_buff <- safely(tinyForestR::get_nbn_buffer)
 
-nbn_data |>
+nbn_data <- safe_buff(-1.469139, 51.777889, n = 10000)
+
+nbn_data$result |>
   head()
 
 ```

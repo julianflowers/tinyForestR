@@ -17,14 +17,13 @@
 #'
 #' \code{\link{os_grid_to_lat_lon}}
 #'
-#'#' @export
+#' @export
 
 
 os_lat_lon_to_grid <- function(lat, lon){
 
   require(reticulate); require(tidyverse)
-  #virtualenv_remove("tinyforest")
-  #virtualenv_create("tinyforest", system_site_packages = TRUE)
+
   Sys.setenv(RETICULATE_PYTHON = "/Users/julianflowers/.virtualenvs/tinyforest/bin/python")
   use_virtualenv("tinyforest")
 
