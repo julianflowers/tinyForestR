@@ -26,4 +26,6 @@ os_lat_lon_to_grid(-2.353, 51.509)
 }
 \seealso{
 \code{\link{os_grid_to_lat_lon}}
+
+#' @export
 }

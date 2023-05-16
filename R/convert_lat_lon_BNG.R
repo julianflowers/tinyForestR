@@ -7,9 +7,8 @@
 #' @param lat numeric vector of latitude coordinates
 #' @return A list with a string containing the Ordnance Survey grid reference for
 #' the lat-lon coordinate pair.
-#' @importFrom reticulate import use_virtualenv, import, py_to_r
-#' @importFrom tidyverse as.character
-#' @import PyBNG
+#' @import reticulate
+#' @import stringr
 #' @examples
 #'
 #' os_lat_lon_to_grid(-2.353, 51.509)
@@ -18,12 +17,7 @@
 #'
 #' \code{\link{os_grid_to_lat_lon}}
 #'
-#' @importFrom reticulate virtualenv_remove virtualenv_create py_install
-#' @importFrom reticulate use_virtualenv import py_to_r
-#' @importFrom stringr str_sub
-#' @importFrom PyBNG latlong2grid
-#' @importFrom tidyverse as.character
-#' @export
+#'#' @export
 
 
 os_lat_lon_to_grid <- function(lat, lon){

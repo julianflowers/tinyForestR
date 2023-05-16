@@ -26,9 +26,9 @@
 #' @import leaflet
 #' @import colorspace
 #' @importFrom stringr str_detect
-#' @importFrom unnest unnest
-#' @importFrom select select
-#' @importFrom filter filter
+#' @importFrom tidyr unnest
+#' @importFrom dplyr select
+#' @importFrom dplyr filter
 #'
 #' @examples
 #'
