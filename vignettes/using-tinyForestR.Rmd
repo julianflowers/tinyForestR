@@ -64,20 +64,25 @@ initialise_tf()
 
 The next step is to load Tiny Forest (TF) data. Because this only exists in a series of web pages the `get_tf_data` function identifies the relevant pages and iterates over them to extract name, id, location, area, planters, and types of tree planted (as a list column), for those TFs planted at the time of extraction. It does include TFs planted outside the UK. The function takes about 30 seconds to iterate over all the relevant pages.
 
-```{r get-tf-data}
+```{r get-tf-data, eval=FALSE}
 
 tf_data <- get_tf_data()
 
 tf_data |>
+  unnest("trees") |> 
   write_csv("tf_data.csv")
+
+
 ```
 
 Once the data is loaded we can save it as a csv file and get some high level information on planting, timings, size and so on.
 
 ```{r tf-head}
-tf_data |>
-  head() |>
-  unnest("trees")
+
+tf_df <- read_csv("tf_data.csv")
+                    
+tf_df |>
+  head() 
 ```
 
 As of `r today()` there are `r nrow(tf_data)` planted TFs.
@@ -88,7 +93,7 @@ needs(patchwork)
 
 ## annual planting
 
-tf_year <- tf_data |>
+tf_year <- tf_df |>
   mutate(year = year(date)) |>
   count(year) |>
   ggplot(aes(year, n)) +
@@ -97,16 +102,15 @@ tf_year <- tf_data |>
 
 ## area distribution
 
-tf_area <- tf_data |>
+tf_area <- tf_df |>
   mutate(year = year(date)) |>
   ggplot(aes(factor(year), area)) +
   geom_boxplot() +
   labs(title = "TF area year")
 
-tf_trees <- tf_data |>
+tf_trees <- tf_df |>
   group_by(tf_id) |>
-  mutate(n_trees = map(trees, length)) |>
-  unnest("n_trees") |>
+  summarise(n_trees = n()) |>
   ggplot() +
   geom_histogram(aes(n_trees)) +
   labs(title = "Distribution of tree richness")
@@ -122,7 +126,7 @@ It is now straightforward to map locations of TFs using `sf` and `mapview`.
 
 ```{r map-location}
 
-tf_data |>
+tf_df |>
   select(-trees) |>
   sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
   mapview(zcol = "area")
@@ -135,8 +139,7 @@ We can also look at planting frequency for different tree species.
 
 ```{r fig.height=6}
 
-tf_data |>
-  unnest("trees") |>
+tf_df |>
   ungroup() |>
   count(trees, sort = TRUE) |>
   top_n(25) |>
@@ -197,5 +200,22 @@ bsbi_data |>
          tf_id = tf_data$tf_id[i]) |>
   arrange(value) 
 ```
+
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+
+
+
 
 [^1]: Note this may sometimes time out depending on traffic on the NBN Atlas webservice

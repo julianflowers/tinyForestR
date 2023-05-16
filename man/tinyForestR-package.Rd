@@ -4,9 +4,9 @@
 \name{tinyForestR-package}
 \alias{tinyForestR}
 \alias{tinyForestR-package}
-\title{tinyForestR: What the Package Does (One Line, Title Case)}
+\title{tinyForestR: Extract, manipulate and analyse data for Tiny Forests in the UK}
 \description{
-What the package does (one paragraph).
+Extract, mainpulate and analyse biodiversity, ecological and environmental data for Tiny Forest and their surroundings.
 }
 \seealso{
 Useful links:
@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Julian Flowers \email{jrf128@stident.aru.ac.uk} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 
 }
 \keyword{internal}
