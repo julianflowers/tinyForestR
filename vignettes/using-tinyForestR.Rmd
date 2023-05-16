@@ -164,8 +164,10 @@ nbn_data |>
 
 tf_data <- readr::read_csv("tf_data.csv")
 
-lat <- tf_data$lat[2]
-lon <- tf_data$lon[2]
+i <- 5
+
+lat <- tf_data$lat[i]
+lon <- tf_data$lon[i]
 
 grid_ref <- tinyForestR::os_lat_lon_to_grid(lat = lat, lon = lon)
 
@@ -179,20 +181,19 @@ I have also included functions to extract data for the 2020 Botanic Society of B
 
 bsbi_data <- tinyForestR::get_bsbi_data(grid_ref = grid_ref$grid)
 
-test |>
+bsbi_data |>
   enframe() |>
   unnest("value") |>
   unnest("value") |>
-  slice(-c(168:173)) |>
+  # slice(-c(168:173)) |>
   mutate(year = str_extract(value, "20\\d{2}"),
          value = str_remove(value, year),
-         count = str_extract(value, "\\d.*$"),
-         value = str_remove(value, count)) |>
-  separate(count, c("past", "present", sep = " ")) |>
-  select(-c(name, past)) |>
-  select(-last_col()) |>
-  pivot_wider(names_from = "value", values_from = "present", values_fn = list)
-
+         count = parse_number(value),
+         value = str_remove(value, as.character(count)), 
+         value = str_remove(value, "\\d{1,}"), 
+         grid = grid_ref$grid, 
+         tf_id = tf_data$tf_id[i]) |>
+  arrange(value) 
 ```
 
 [^1]: Note this may sometimes time out depending on traffic on the NBN Atlas webservice
