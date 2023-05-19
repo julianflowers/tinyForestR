@@ -32,6 +32,7 @@ initialise_tf <- function(){
   geemap <- import("geemap")
   os <- import("osdatahub")
   osgrid <- import("OSGridConverter")
+  geedim <- import("geedim")
 
 }
 
