@@ -17,7 +17,6 @@
 #' ndvi_stats: Summary statistics of the NDVI values within the buffer region, including median, minimum, maximum, mean and standard deviation.
 #'
 #' @import reticulate rgee tidyrgee zoo terra
-#' @importFrom geedim ee_Initialize ee_AssetList
 #' @export
 #'
 #' @examples
@@ -40,7 +39,7 @@ calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date 
 
   ee <- import("ee")
   geemap <- import("geemap")
-  import("geedim")
+  geedim <- import("geedim")
 
   #ee_Authenticate()
   ee_Initialize(drive = TRUE)
