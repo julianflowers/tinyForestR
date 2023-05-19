@@ -53,7 +53,7 @@ plot_os_land_cover <- function(lon, lat, key, buff = 1000, n = 10000L){
   use_virtualenv("tinyforest")
   #py_install("osdatahub", pip = TRUE, envname = "tinyforest")
 
-  key = key
+  key = "QQfpQgnuiTQLA3fErTbffq8G4VOGdP6b"
   ## import modules
 
   osmaps <- import("osdatahub")
@@ -72,6 +72,7 @@ plot_os_land_cover <- function(lon, lat, key, buff = 1000, n = 10000L){
 
   lon <- lon
   lat <- lat
+  buff <- 1000
 
   x1 <- lon - buff
   x2 <- lon + buff
@@ -79,7 +80,7 @@ plot_os_land_cover <- function(lon, lat, key, buff = 1000, n = 10000L){
   y2 <- lat + buff
 
   bbox <- c(x1, y1, x2, y2)
-
+  n <- 10000L
 
   extent = Extent$from_bbox(bbox, crs = "EPSG:27700")
 
