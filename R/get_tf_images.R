@@ -27,13 +27,13 @@ save_ggmap_images<- function(lon, lat, key){
   Sys.setenv(GGMAP_GOOGLE_API_KEY= key)
   library(needs)
   needs(ggmap, tidyverse, sf, here, lubridate, vegan, data.table, mapview)
-
+  ggmap::register_google(key)
   ggmap::get_googlemap(center = c(lon = lon, lat = lat),
                        zoom = 19, maptype = "satellite") |>
-    ggmap() -> p
+  ggmap() -> p
 
 
-  ggsave(paste0(here::here(), "/images/tf_", i, ".png"), p)
+  ggsave(paste0(here::here(), "/images/tf_", lon, lat, ".png"), p)
 
 }
 

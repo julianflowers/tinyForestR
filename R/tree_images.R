@@ -28,7 +28,7 @@ lime <- "https://upload.wikimedia.org/wikipedia/commons/b/b5/Tilia_cordata_%27Er
 lime_att <- '<a href="https://commons.wikimedia.org/wiki/File:Tilia_cordata_%27Erecta%27.jpg">Gmihail at Serbian Wikipedia</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/rs/deed.en">CC BY-SA 3.0 RS</a>, via Wikimedia Commons'
 
 hornbeam <- "https://upload.wikimedia.org/wikipedia/commons/c/c6/Carpinus_betulus_001.JPG"
-hornbeam_att '<a href="https://commons.wikimedia.org/wiki/File:Carpinus_betulus_001.JPG">H. Zell</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>, via Wikimedia Commons'
+hornbeam_att <- '<a href="https://commons.wikimedia.org/wiki/File:Carpinus_betulus_001.JPG">H. Zell</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>, via Wikimedia Commons'
 
 english_oak <- "https://upload.wikimedia.org/wikipedia/commons/c/c8/1._English_Oak_%28Quercus_robur%29_%283607652442%29.jpg"
 english_oak_att <- '<a href="https://commons.wikimedia.org/wiki/File:1._English_Oak_(Quercus_robur)_(3607652442).jpg">AnemoneProjectors</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a>, via Wikimedia Commons'
