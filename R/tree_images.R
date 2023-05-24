@@ -45,7 +45,6 @@ alder_att <- '<a href="https://commons.wikimedia.org/wiki/File:Alnus_glutinosa_s
 black_elder <- "https://upload.wikimedia.org/wikipedia/commons/6/61/Sambucus_nigra_004.jpg"
 black_elder_att <- '<a href="https://commons.wikimedia.org/wiki/File:Sambucus_nigra_004.jpg">Willow</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>, via Wikimedia Commons'
 
-
 holly <- "https://upload.wikimedia.org/wikipedia/commons/f/fb/Ilex_aquifolium_in_Budapest.jpg"
 holly_att <- '<a href="https://commons.wikimedia.org/wiki/File:Ilex_aquifolium_in_Budapest.jpg">Хомелка</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a>, via Wikimedia Commons'
 

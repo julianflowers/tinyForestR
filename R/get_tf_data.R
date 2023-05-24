@@ -84,6 +84,7 @@ get_tf_data <- function(){
   # for tiny forests that have at least 4 pieces of information
   tf_table_planted <- tf_table |>
     group_by(tf_id) |>
+    left_join(tf_df, by = "tf_id") |>
     mutate(n = n(),
            id = row_number()) |>
     #count(tf_id) |>
@@ -99,9 +100,9 @@ get_tf_data <- function(){
   # Reformat the data frame to be in a tidy format
   tf_table_tidy <- tf_table_planted |>
     # Remove unnecessary columns
-    select(-c(n, name, id)) |>
+    select(-c(n, name.x, id)) |>
     # Reshape the data frame so each piece of information is in its own column
-    pivot_wider(names_from = "metric", values_from = "value", values_fn = list ) |>
+    pivot_wider(names_from = "metric", values_from = "value.x", values_fn = list ) |>
     unnest("gps") |>
     #unnest("class area") |>
     unnest("area") |>
@@ -118,6 +119,8 @@ get_tf_data <- function(){
     mutate(trees = str_split(trees, "\\|"),
            lat = as.numeric(lat),
            lon = as.numeric(lon))
+
+  output <- list(ids = tf_df, tidy_rf = tf_table_tidy)
 
 
 }

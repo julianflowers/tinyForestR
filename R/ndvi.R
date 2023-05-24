@@ -31,6 +31,7 @@
 #' - terra package documentation: https://rspatial.org/terr'
 
 
+
 calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date = "2021-01-01", end_date = "2021-12-31", cloud_cover = 10){
 
   require(reticulate); require(rgee); require(tidyrgee); if(!require(zoo))install.packages("zoo")
@@ -97,5 +98,4 @@ calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date 
 
 
 }
-
 

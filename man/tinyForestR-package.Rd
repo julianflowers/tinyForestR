@@ -6,7 +6,7 @@
 \alias{tinyForestR-package}
 \title{tinyForestR: Extract, manipulate and analyse data for Tiny Forests in the UK}
 \description{
-Extract, mainpulate and analyse biodiversity, ecological and environmental data for Tiny Forest and their surroundings.
+Extract, mainpulate and analyse biodiversity, ecological and environmental data for Tiny Forests and their surroundings.
 }
 \seealso{
 Useful links:
