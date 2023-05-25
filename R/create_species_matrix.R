@@ -40,13 +40,7 @@ create_species_matrix <- function(df, class){
   sites <- df_matrix[, 1]
 
   out <- list(sp = species_matrix, sites = sites)
-
   return(out)
 
 }
-
-
-
-
-
 

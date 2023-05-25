@@ -57,7 +57,8 @@ This:
 ### Install and initialise
 
 ```{r setup}
-devtools::install_github("julianflowers/tinyForestR", force = TRUE)
+if(!require("tinyForestR"))
+devtools::install_github("julianflowers/tinyForestR")
 library(tinyForestR)
 
 needs(leaflet.extras2)
@@ -80,14 +81,14 @@ tf_data |>
 
 ```
 
-Once the data is loaded we can save it as a csv file and get some high level information on planting, timings, size and so on.
+Once the data is loaded we can save it as a csv file and get some high level information on planting, timings, size and so on. I have added the snapshot data to the `tinyForestR` package for consistency.
 
 ```{r tf-head}
 
-tf_df <- read_csv("data/tf_data.csv")
-                    
+tf_df <- tinyForestR::tf1
 tf_df |>
-  head() 
+  head()
+
 ```
 
 As of `r today()` there are `r length(unique(tf_df$tf_id))` planted TFs.
@@ -99,7 +100,7 @@ needs(patchwork)
 ## annual planting
 
 tf_year <- tf_df |>
-  mutate(year = year(date)) |>
+  #mutate(year = year(date)) |>
   count(year) |>
   ggplot(aes(year, n)) +
   geom_col() +
@@ -108,13 +109,13 @@ tf_year <- tf_df |>
 ## area distribution
 
 tf_area <- tf_df |>
-  mutate(year = year(date)) |>
+  #mutate(year = year(date)) |>
   ggplot(aes(factor(year), area)) +
   geom_boxplot() +
   labs(title = "TF area year")
 
 tf_trees <- tf_df |>
-  group_by(tf_id) |>
+  group_by(tfid) |>
   summarise(n_trees = n()) |>
   ggplot() +
   geom_histogram(aes(n_trees)) +
