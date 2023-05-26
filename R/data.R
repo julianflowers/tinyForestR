@@ -55,3 +55,19 @@
 
 #'   ...
 #' }
+#'
+
+#' @title Tiny Forest (TF) data
+#' @description TF ids, planting dates, area, lat-lon and tree species planted
+#' @format A data frame with 190 rows and 7 variables:
+#' \describe{
+#'   \item{\code{tf_id}}{double Tiny Forest ID}
+#'   \item{\code{plant_date}}{character Date planted}
+#'   \item{\code{area}}{double Area in m2}
+#'   \item{\code{trees}}{list Tree species planted}
+#'   \item{\code{lat}}{double Decimal latitude}
+#'   \item{\code{lon}}{double Decimal longitude}
+#'   \item{\code{date}}{double Date planted}
+#'}
+#' @source \url{https://tinyforest.earthwatch.org.uk/tiny-forest-sites}
+"tf_data"
