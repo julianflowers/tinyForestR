@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
   message = FALSE, 
-  cache = TRUE, 
+  cache = FALSE, 
   comment = "#>", 
   fig.width = 8, 
   fig.height = 6
@@ -58,11 +58,11 @@ This:
 
 ```{r setup}
 if(!require("tinyForestR"))
-devtools::install_github("julianflowers/tinyForestR")
+devtools::install_github("julianflowers/tinyForestR", force = TRUE)
 if(!require("pacman"))install.packages("pacman")
 library(tinyForestR)
 
-p_load(leaflet.extras2, tidyverse, mapview, sf, ggmap)
+p_load(leaflet.extras2, tidyverse, mapview, sf, ggmap, lubridate)
 
 initialise_tf()
 ```
@@ -79,17 +79,21 @@ tictoc::toc()
 
 ```
 
-Once the data is loaded we can save it as a csv file and get some high level information on planting, timings, size and so on. 
 
-```{r tf-head}
+```{r, tf_data}
 
-tf_df <- tf_data |>
+tf <- read_csv("../data/tf_data.csv")
+
+tf_df <- tf |>
+  unnest("trees") |>
   mutate(year = year(date), 
-         month = month(date))
-tf_df |>
-  glimpse()
+         month = month(date)) 
+
+
 
 ```
+
+Once the data is loaded we can save it as a csv file and get some high level information on planting, timings, size and so on. 
 
 As of `r today()` there are `r length(unique(tf_df$tf_id))` planted TFs.
 
@@ -100,7 +104,8 @@ needs(patchwork)
 ## annual planting
 
 tf_year <- tf_df |>
-  # mutate(year = lubridate::year(date)) |>
+  select(-trees) |>
+  distinct() |>
   count(year) |>
   ggplot(aes(year, n)) +
   geom_col() +
@@ -109,7 +114,8 @@ tf_year <- tf_df |>
 ## area distribution
 
 tf_area <- tf_df |>
-  # mutate(year = lubridate::year(date)) |>
+  select(-trees) |>
+  distinct() |>
   ggplot(aes(factor(year), area)) +
   geom_boxplot() +
   labs(title = "TF area year")
@@ -119,7 +125,8 @@ tf_trees <- tf_df |>
   summarise(n_trees = n()) |>
   ggplot() +
   geom_histogram(aes(n_trees)) +
-  labs(title = "Distribution of tree richness")
+  labs(title = "Distribution of tree species", 
+       x = "Number of tree species")
 
 tf_year + tf_area + tf_trees
 
@@ -136,8 +143,10 @@ library(mapview)
 
 tf_df |>
   select(-trees) |>
+  distinct() |>
+  mutate(year = factor(year)) |>
   sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
-  mapview(zcol = "area")
+  mapview(zcol = "year")
 
 ```
 
@@ -155,7 +164,9 @@ tf_df |>
   ggplot() +
   geom_col(aes(n, reorder(trees, n))) +
   labs(y = "", 
-       title = "25 commonest tree species planted")
+       title = "25 most commonly planted tree species") +
+  ggthemes::theme_base() +
+  theme(plot.title.position = "plot")
 
 ```
 
