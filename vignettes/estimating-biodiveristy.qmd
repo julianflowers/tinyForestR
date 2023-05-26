@@ -1,0 +1,227 @@
+---
+title: "Comparing species richness between TF areas"
+format: html
+editor: visual
+---
+
+## Import TF data
+
+```{r}
+
+# library(devtools)
+# install_github("julianflowers/tinyForestR")
+
+library(tinyForestR);library(tidyverse)
+??tinyForestR
+
+data <- tinyForestR::birds_filt
+
+
+
+```
+
+```{r, eval=FALSE}
+
+locs <- tf |>
+  select(lat, lon, tf_id) 
+
+
+needs(future, furrr)
+plan(multisession)
+safe_buff <- safely(get_nbn_buffer)
+
+ndn_data <- future_map(1:187, ~(safe_buff(locs$lon[.x], locs$lat[.x], n = 30000L)), .progress = TRUE)
+ndn_data[, -c(7, 32, 49, 52:53)]
+
+nbn_data <- map(ndn_data, "result") 
+
+add_id_1 <- function(i){
+  nbn_data_2[[i]] |>
+  mutate(tf_id = out$tf_id[i])
+}
+
+safe_add_id_1 <- safely(add_id_1)
+
+names(nbn_data)
+
+nbn_data_1 <- map(1:nrow(tf), safe_add_id)
+nbn_data_1 <- map_dfr(nbn_data_1, "result") 
+ 
+
+nulls <- map_chr(nbn_data, is.null) |>
+  enframe() |>
+  filter(value == "TRUE") |>
+  pluck("name")
+
+out <- locs |>
+  ungroup() |>
+  mutate(id = row_number()) |>
+  filter(id %in% nulls)
+
+inc <- locs |>
+  ungroup() |>
+  mutate(id = row_number()) |>
+  filter(!id %in% nulls)
+
+ndn_data_1 <- future_map(1:length(nulls), ~(safe_buff(out$lon[.x], out$lat[.x], n = 30000L)), .progress = TRUE)
+
+
+locs[nulls, ]
+
+nbn_data_2 <- map(ndn_data_1, "result") 
+nbn_data_2 <- map(1:32,  safe_add_id_1)
+nbn_data_2 <- map_dfr(nbn_data_2, "result")
+
+nbn_data_3 <- nbn_data_2 |>
+  bind_rows(nbn_data_1)
+
+library(data.table)
+data.table::setDTthreads(6)
+
+nbn_data_3 |> setDT()
+
+birds_filt <- nbn_data_3[between(year, 2013, 2023) & classs == "Aves", ]
+insects_filt <- nbn_data_3[between(year, 2013, 2023) & classs == "Insecta", ]
+flowers_filt <- nbn_data_3[between(year, 2013, 2023) & classs == "Magnoliopsida", ]
+
+fwrite(birds_filt, "../data/nbn_birds.csv")
+fwrite(insects_filt, "../data/nbn_insects.csv")
+fwrite(flowers_filt, "../data/nbn_flowers.csv")
+
+birds <- fread("../data/nbn_birds.csv")
+
+birds_filt[, .N, by=.(tf_id)][order(-N)]
+
+insects_filt[, .N, by=.(tf_id)][order(-N)]
+
+flowers_filt[, .N, by=.(tf_id)][order(-N)]
+
+
+
+```
+
+```{r}
+
+
+
+test <- ndn_data |>
+  map("result") 
+
+test <- test[-c(49, 168, 172:176)]
+
+
+
+test[[1]]
+
+nbn_aves <- map(test, ~(.x |> filter(between(year, 2010, 2020) & classs == "Aves")))
+nbn_insecta <- map(test, ~(.x |> filter(between(year, 2010, 2020) & classs == "Insecta")))
+nbn_mag <- map(test, ~(.x |> filter(between(year, 2010, 2020) & classs == "Magnoliopsida")))
+
+str(nbn_mag, max.level = 1) |>
+  enframe()
+
+map(nbn_insecta, "nrow")
+
+
+nbn |> saveRDS("nbn_data.rds")
+
+nbn_df <-read_rds("nbn_data.rds")
+
+nbn_sp_matrix_aves <- map_dfr(nbn_aves, ~(.x |> count(species) |>
+  pivot_wider(names_from = "species", values_from = "n", values_fill = 0)))
+
+
+tot_obs_aves <- nbn_sp_matrix_aves |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  rowwise() |>
+  mutate(tot = sum(c_across(`Accipiter nisus`:`Circus cyaneus`))) |>
+  select(last_col())
+
+nbn_sp_matrix_aves |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  vegan::specnumber() |>
+  bind_cols(tot_obs) |>
+  ggplot() +
+  geom_point(aes(tot, ...1)) +
+  geom_smooth(aes(tot, ...1), method = "loess", span = 0.8) +
+  labs(x = "Total observations", 
+       y = "Avian species richness")
+
+
+nbn_sp_matrix_insecta <- map_dfr(nbn_insecta, ~(.x |> count(species) |>
+  pivot_wider(names_from = "species", values_from = "n", values_fill = 0)))
+
+
+tot_obs_insecta <- nbn_sp_matrix_insecta |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |> 
+  rowwise() |>
+  mutate(tot = sum(c_across(`Aglais io`:`Uroleucon cirsii`))) |>
+  select(last_col())
+
+nbn_sp_matrix_insecta |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  vegan::specnumber() |>
+  bind_cols(tot_obs_insecta) |>
+  ggplot() +
+  geom_point(aes(tot, ...1)) +
+  geom_smooth(aes(tot, ...1), method = "loess", span = 0.8) +
+  labs(x = "Total observations", 
+       y = "Insect species richness")
+
+nbn_sp_matrix_aves <- map_dfr(nbn_aves, ~(.x |> count(species) |>
+  pivot_wider(names_from = "species", values_from = "n", values_fill = 0)))
+
+
+tot_obs_aves <- nbn_sp_matrix_aves |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  rowwise() |>
+  mutate(tot = sum(c_across(`Accipiter nisus`:`Circus cyaneus`))) |>
+  select(last_col())
+
+nbn_sp_matrix_aves |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  vegan::specnumber() |>
+  bind_cols(tot_obs) |>
+  ggplot() +
+  geom_point(aes(tot, ...1)) +
+  geom_smooth(aes(tot, ...1), method = "loess", span = 0.8) +
+  labs(x = "Total observations", 
+       y = "Avian species richness")
+
+
+nbn_sp_matrix_plant <- map_dfr(nbn_mag, ~(.x |> count(species) |>
+  pivot_wider(names_from = "species", values_from = "n", values_fill = 0)))
+
+tot_obs_plant <- nbn_sp_matrix_plant |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |> 
+  rowwise() |>
+  mutate(tot = sum(c_across(`Acer campestre`:`Tilia tomentosa`))) |>
+  select(last_col())
+
+nbn_sp_matrix_plant |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  vegan::specnumber() |>
+  bind_cols(tot_obs_plant) |>
+  ggplot() +
+  geom_point(aes(tot, ...1)) +
+  geom_smooth(aes(tot, ...1), method = "loess", span = 0.8) +
+  labs(x = "Total observations", 
+       y = "Plant species richness")
+
+
+ins <- nbn_sp_matrix_insecta |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  vegan::specnumber() |>
+  bind_cols(tot_obs_insecta)
+
+birds <- nbn_sp_matrix_aves |>
+  mutate_all(~(ifelse(is.na(.x), 0, .x))) |>
+  vegan::specnumber() |>
+  bind_cols(tot_obs_aves)
+
+birds |>
+  bind_cols(ins) |>
+  ggplot(aes(tot...2, tot...4)) +
+  geom_point()
+
+```
