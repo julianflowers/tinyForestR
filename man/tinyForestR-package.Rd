@@ -12,6 +12,7 @@ Extract, mainpulate and analyse biodiversity, ecological and environmental data 
 Useful links:
 \itemize{
   \item \url{https://github.com/julianflowers/tinyForestR}
+  \item \url{https://julianflowers.github.io/tinyForestR/}
   \item Report bugs at \url{https://github.com/julianflowers/tinyForestR/issues}
 }
 
