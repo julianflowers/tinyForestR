@@ -29,7 +29,7 @@ save_ggmap_images<- function(lon, lat, key){
   needs(ggmap, tidyverse, sf, here, lubridate, vegan, data.table, mapview)
   ggmap::register_google(key)
   ggmap::get_googlemap(center = c(lon = lon, lat = lat),
-                       zoom = 19, maptype = "satellite") |>
+                       zoom = 10, maptype = "satellite") |>
   ggmap() -> p
 
 

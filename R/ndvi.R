@@ -76,6 +76,10 @@ calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date 
   raster <- ee_as_raster(image = s2$median()$clip(buff)$normalizedDifference(c("B8","B4")), region = buff, scale = 1, via = "drive"
                )
 
+  ndvi_df <- raster |>
+    terra::as.data.frame() |>
+    drop_na()
+
   ndvi_stats <- raster |>
     terra::as.data.frame() |>
     drop_na() |>
@@ -94,7 +98,7 @@ calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date 
   s2_tidy <- tidyrgee::as_tidyee(s2)
 
   out <- list(map = map, tidy_dates = s2_tidy, image_ids = s2_tidy$vrt |>
-                pluck("id"), raster = raster, ndvi_stats = ndvi_stats)
+                pluck("id"), raster = raster, ndvi_stats = ndvi_stats, ndvi_df = ndvi_df)
 
 
 }
