@@ -4,7 +4,7 @@
 \alias{plot_os_land_cover}
 \title{Plot OS Land Cover}
 \usage{
-plot_os_land_cover(lon, lat, key, buff = 1000, n = 10000L)
+plot_os_land_cover(lon, lat, key, buff = 1000, n = 5000L)
 }
 \arguments{
 \item{lon}{numeric value indicating the longitude of the required point (e.g. -0.1426)}
