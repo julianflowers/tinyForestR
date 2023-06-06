@@ -38,7 +38,7 @@
 #'
 #' @export
 
-plot_os_land_cover <- function(lon, lat, key, buff = 1000, n = 10000L){
+plot_os_land_cover <- function(lon, lat, key, buff = 1000, n = 5000L){
 
   # lon <- lon
   # lat <- lat
@@ -80,7 +80,7 @@ plot_os_land_cover <- function(lon, lat, key, buff = 1000, n = 10000L){
   y2 <- lat + buff
 
   bbox <- c(x1, y1, x2, y2)
-  n <- 10000L
+  n <- n
 
   extent = Extent$from_bbox(bbox, crs = "EPSG:27700")
 
@@ -106,6 +106,8 @@ plot_os_land_cover <- function(lon, lat, key, buff = 1000, n = 10000L){
     mapview(zcol = "oslandcovertierb", col.region = pal)
 
   out <- list(sf = gj, map = mv, tiers = tierb)
+
+  Sys.sleep(60)
 
 }
 
