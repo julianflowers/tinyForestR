@@ -8,7 +8,7 @@
 #' \describe{
 #'   \item{kingdom}{Animal kingdowm}
 #'   \item{phylum, classs, order, family, genus}{taxomomic classification}
-#'   \item{decimalLatiturde, decimalLongitude}{decimal coordinates}
+#'   \item{decimalLatitude, decimalLongitude}{decimal coordinates}
 #'   \item{year, month}{Year and month of collection}
 #'   \item{dataProviderName}{data source}
 #'   \item{speciesGrouns, vernacularName, species}{species common and scientific name}
@@ -28,7 +28,7 @@
 #' \describe{
 #'   \item{kingdom}{Animal kingdowm}
 #'   \item{phylum, classs, order, family, genus}{taxomomic classification}
-#'   \item{decimalLatiturde, decimalLongitude}{decimal coordinates}
+#'   \item{decimalLatitude, decimalLongitude}{decimal coordinates}
 #'   \item{year, month}{Year and month of collection}
 #'   \item{dataProviderName}{data source}
 #'   \item{speciesGrouns, vernacularName, species}{species common and scientific name}
@@ -47,7 +47,7 @@
 #' \describe{
 #'   \item{kingdom}{Animal kingdowm}
 #'   \item{phylum, classs, order, family, genus}{taxomomic classification}
-#'   \item{decimalLatiturde, decimalLongitude}{decimal coordinates}
+#'   \item{decimalLatitude, decimalLongitude}{decimal coordinates}
 #'   \item{year, month}{Year and month of collection}
 #'   \item{dataProviderName}{data source}
 #'   \item{speciesGrouns, vernacularName, species}{species common and scientific name}
