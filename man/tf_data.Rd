@@ -11,7 +11,7 @@ A data frame with 309,090 rows and 15 columns:
 \describe{
 \item{kingdom}{Animal kingdowm}
 \item{phylum, classs, order, family, genus}{taxomomic classification}
-\item{decimalLatiturde, decimalLongitude}{decimal coordinates}
+\item{decimalLatitude, decimalLongitude}{decimal coordinates}
 \item{year, month}{Year and month of collection}
 \item{dataProviderName}{data source}
 \item{speciesGrouns, vernacularName, species}{species common and scientific name}
@@ -30,7 +30,7 @@ A data frame with 23,143 rows and 15 columns:
 \describe{
 \item{kingdom}{Animal kingdowm}
 \item{phylum, classs, order, family, genus}{taxomomic classification}
-\item{decimalLatiturde, decimalLongitude}{decimal coordinates}
+\item{decimalLatitude, decimalLongitude}{decimal coordinates}
 \item{year, month}{Year and month of collection}
 \item{dataProviderName}{data source}
 \item{speciesGrouns, vernacularName, species}{species common and scientific name}
@@ -48,7 +48,7 @@ A data frame with 45,597 rows and 15 columns:
 \describe{
 \item{kingdom}{Animal kingdowm}
 \item{phylum, classs, order, family, genus}{taxomomic classification}
-\item{decimalLatiturde, decimalLongitude}{decimal coordinates}
+\item{decimalLatitude, decimalLongitude}{decimal coordinates}
 \item{year, month}{Year and month of collection}
 \item{dataProviderName}{data source}
 \item{speciesGrouns, vernacularName, species}{species common and scientific name}
