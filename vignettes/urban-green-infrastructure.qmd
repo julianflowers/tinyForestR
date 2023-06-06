@@ -1,0 +1,154 @@
+---
+title: "Green infrastructure"
+format: html
+editor: visual
+execute: 
+  cache: true
+  message: false
+  warning: false
+bibliography: ../references.bib
+---
+
+## Green infrastructure
+
+[@burgess2015; @koc2016; @young2014; @rolf2022; @calfapietra2019; @brilhante2023; @jones2022; @burgess2015a]
+
+## Biodiversity
+
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Green infrastructure | Category               | Support for biodiversity | Data source(s)                                  |
++======================+========================+==========================+=================================================+
+| Private garden       | Garden                 | High                     | OS NGD                                          |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Park                 | Park                   | High                     | OS Open Greenspace                              |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Botanical garden     | Park                   | Very high                | OS Open Greenspace                              |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Heritage garden      | Park                   | High                     | OS Open Greenspace                              |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Cemetry              | Other public space     | High                     | OS Open Greenspace                              |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Allotment            | Other public space     | High                     | OS Open Greenspace                              |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Railway corridor     | Linear features        | Very high                | OS Open Greenspace                              |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Riparian woodland    | Linear features        | Very high                | EDINA Environment Data (linear wooded features) |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Attenuation pond     | Hybrid GI for water    | High                     | OS OpenRivers                                   |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Wetland              | Waterbodies            | High                     | OS NGD                                          |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| River/stream         | Waterbodies            | High                     | OS OpenRivers                                   |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Pond                 | Waterbodies            | High                     | OS OpenRivers                                   |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Lake                 | Waterbodies            | Very high                | OS OpenRivers                                   |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Estuary              | Waterbodies            | Very high                | OS OpenRivers                                   |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Sea                  | Waterbodies            | Very high                | OS OpenRivers                                   |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Woodland             | Non sealed urban areas | Very high                | OS NGD                                          |
+|                      |                        |                          |                                                 |
+|                      |                        |                          | Priority habitats                               |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+| Shrubland            | Non sealed urban areas | High                     | OS NGD                                          |
++----------------------+------------------------+--------------------------+-------------------------------------------------+
+
+```{r}
+
+library(tinyForestR);library(sf)
+
+initialise_tf()
+
+os <- import("osdatahub")
+
+os$OpenDataDownload$all_products() |>
+  enframe() |>
+  unnest_auto("value") 
+
+greenspace <- os$OpenDataDownload("OpenGreenspace")
+openrivers <- os$OpenDataDownload("OpenRivers")
+openrivers$product_list() |>
+  enframe() |>
+  unnest_auto("value") 
+
+key <- "QQfpQgnuiTQLA3fErTbffq8G4VOGdP6b"
+#os$DataPackageDownload$all_products(key)
+
+
+## Load Open Greenspace
+gs <- read_sf("/Users/julianflowers/Library/CloudStorage/Dropbox/Mac (2)/Desktop/tinyForestR/vignettes/opgrsp_gml3_gb.zip/OS Open Greenspace (GML) GB/data/OSOpenGreenspace_GB.gml",  layer = "GreenspaceSite")
+
+
+## Load Open Rivers
+rivers <- read_sf("/Users/julianflowers/Library/CloudStorage/Dropbox/Mac (2)/Desktop/tinyForestR/vignettes/oprvrs_gml3_gb.zip/oprvrs_gml3_gb/data/OSOpenRivers.gml", layer = "WatercourseLink")
+
+## Load Linear Wooded features (CEH)
+linear <- read_sf("GB_WLF_V1_0.gdb", quiet = FALSE)
+
+## Load decidous woodland from priority habitats inventory
+woods <- read_sf("/Users/julianflowers/Dropbox/My Mac (Julians-MBP-2)/Downloads/Priority_Habitats_Inventory_England_2210546699479199036.gpkg")
+
+
+
+## filter 
+gs_bd <- gs |>
+  filter(`function` %in% c("Allotments Or Community Growing Spaces", "Cemetery", "Public Park Or Garden", "Playing Field"))
+
+rivers_bd <- rivers |>
+  filter(form != "canal")
+  
+```
+
+```{r}
+
+library(sf);library(tinyForestR)
+
+## Get Tiny Forest data (TF)
+tf_data <- tf_data$tidy_rf
+
+
+## Calculate 1km buffer round each TF
+tf_sf <- tf_data |>
+  select(-trees) |>
+  st_as_sf(coords = c("lon", "lat"), crs = 4236) |>
+  st_transform(27700) |>
+  st_buffer(1000)
+
+
+
+
+```
+
+```{r mapview}
+
+needs(mapview, plainview, leaflet, leafsync)
+
+## crop ft_sf to greenspace extent
+tf_sf_1 <- st_crop(tf_sf, gs) 
+
+
+## calculate intersections with tf data
+
+m1 <- st_intersection(tf_sf, rivers_bd) 
+
+m2 <- st_intersection(tf_sf, gs_bd)
+
+m3 <- st_intersection(tf_sf, linear)
+
+m4 <- st_intersection(tf_sf, woods)
+
+
+
+
+## map
+mapview(m3) +
+  mapview(m2, zcol = "function.") +
+  mapview(m1, zcol = "form") +
+  mapview(m4, zcol = "MainHabs") +
+  mapview(tf_sf_1, alpha = 0.6)
+
+```
+
+## References
