@@ -13,7 +13,6 @@
 #' @importFrom sf st_as_sf st_transform st_intersection st_bbox
 #' @importFrom osmdata osmdata_sf add_osm_feature opq
 #' @importFrom mapview mapview
-#' @importFrom tidyverse filter
 #'
 #' @examples
 #' \dontrun{
