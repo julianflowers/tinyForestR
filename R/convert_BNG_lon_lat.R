@@ -7,6 +7,7 @@
 #' @return A list with the longitude and latitude in decimal degrees.
 #' @import reticulate
 #' @import tidyverse
+#'
 #' @export
 
 
