@@ -1,0 +1,95 @@
+---
+title: An R Markdown document converted from "extract_taxa_from_texts_with_taxonerd.ipynb"
+output: html_document
+---
+
+<a href="https://colab.research.google.com/github/julianflowers/tinyForestR/blob/main/extract_taxa_from_texts_with_taxonerd.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+
+Sure, here is the code in Python to install nmslib for Python on an M1 MacBook:
+
+```{python}
+import os
+import subprocess
+
+def install_nmslib():
+  """Installs nmslib for Python on an M1 MacBook."""
+
+  # Install the Xcode command line tools.
+  #subprocess.run(["xcode-select", "--install"])
+
+  # Clone the nmslib repository from GitHub.
+  subprocess.run(["git", "clone", "https://github.com/nmslib/nmslib.git"])
+
+  # cd into the nmslib directory.
+  os.chdir("nmslib/similarity_search")
+
+  # Edit the CMakeLists.txt file and change the following line:
+  #
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+  #
+  # to
+  #
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=apple-a14")
+
+  with open("CMakeLists.txt", "r") as f:
+    text = f.read()
+
+  text = text.replace("-march=native", "-mcpu=apple-a14")
+
+  with open("CMakeLists.txt", "w") as f:
+    f.write(text)
+
+  # Run the following command to build nmslib.
+  subprocess.run(["cmake", "."])
+  subprocess.run(["make"])
+
+  # Install the Python bindings for nmslib.
+  subprocess.run(["pip", "install", "--no-binary=nmslib", "nmslib"])
+
+if __name__ == "__main__":
+  install_nmslib()
+```
+
+```{python}
+!pip install https://github.com/nleguillarme/taxonerd/releases/download/v1.5.0/en_core_eco_weak_biobert-1.0.0.tar.gz
+```
+
+This code will install nmslib for Python on an M1 MacBook. Once the installation is complete, you can test the installation by running the following command:
+
+```
+python -c "import nmslib"
+```
+
+If you do not see any errors, then nmslib has been successfully installed.
+
+```{python}
+import nmslib
+```
+
+```{python}
+!pip install taxonerd
+```
+
+```{python}
+from taxonerd import TaxoNERD
+taxonerd = TaxoNERD(prefer_gpu=False)
+```
+
+```{python}
+ner = taxonerd.load(model="en_core_eco_weak_biobert")
+```
+
+```{python}
+taxonerd.find_in_text("Brown bears (Ursus arctos), which are widely distributed throughout the northern hemisphere, are recognised as opportunistic omnivore")
+     
+```
+
+```{python}
+from google.colab import drive
+drive.mount('/content/drive')
+```
+
+```{python}
+taxonerd.find_in_file("/content/Ecology - 2012 - Legagneux - Disentangling trophic relationships in a High Arctic tundra ecosystem through food web.pdf")
+```
+
