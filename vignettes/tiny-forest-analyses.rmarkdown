@@ -1,0 +1,121 @@
+---
+title: "Tiny Forest project analyses"
+format: html
+editor: visual
+execute: 
+  cache: true
+  message: false
+  warning: false
+  echo: false
+---
+
+
+## Load packages and initialise; load data
+
+
+```{r}
+
+library(needs)
+needs(tidyverse, sf, raster, mapview, janitor)
+devtools::install_github("julianflowers/tinyForestR")
+library(tinyForestR)
+
+tinyForestR::initialise_tf()
+
+ntf_data <- tinyForestR::get_tf_data()
+
+head(ntf_data)
+
+```
+
+
+## Convert to `sf`
+
+Plot an interactive map of current tf locations and colour by number of tree species per location.
+
+
+```{r}
+
+## exclude tf in australia
+## count tree species
+tf_data_sf <- ntf_data |>
+  unnest(trees) |> 
+  group_by(tf_id) |>
+  mutate(n = n()) |>
+  ungroup()
+
+tf_data_sf <- tf_data_sf |>
+  dplyr::select(-trees) |>
+  distinct() |>
+  filter(lat > 0) 
+
+tf_data_sf <- tf_data_sf |>
+  st_as_sf(coords = c("lon", "lat"), crs = 4326)
+
+mapview(tf_data_sf, zcol = "n")
+
+
+
+```
+
+
+## Calculate TF buffers
+
+
+```{r}
+## ad 1km buffer round each TF location
+tf_buffer <- st_buffer(st_transform(tf_data_sf, 27700), 1000)
+  
+## show Five Trees
+mapview(tf_buffer |> filter(tf_id == 214))
+
+
+```
+
+
+## NBN data
+
+
+```{r}
+
+five_trees <- ntf_data |>
+  filter(tf_id == 214) |>
+  dplyr::select(lon, lat)
+
+nbn_five <- tinyForestR::get_nbn_buffer(lon = five_trees$lon, lat = five_trees$lat, radius = 1) |> mutate(tf_id = five_trees$tf_id)
+
+nbn_five |>
+  filter(between(year, 1990, 2023)) |>
+  count(classs, dataProviderName, sort = TRUE) |>
+  gt::gt()
+
+
+
+```
+
+
+## Global species diversity
+
+### By year
+
+
+```{r}
+
+
+nbn_spec_sn <- nbn_five |>
+  dplyr::select(year, species) |>
+  filter(between(year, 1990, 2023)) |>
+  group_by(year) |>
+  count(species) |>
+  pivot_wider(names_from = "species", values_from = "n", values_fill = 0) |>
+  dplyr::select(-year) |>
+  vegan::specnumber()
+
+data.frame(year = 1990:2022, sn = nbn_spec_sn) |>
+  ggplot() +
+  geom_col(aes(year, sn)) +
+  geom_smooth(aes(year, sn), method = "gam", se = FALSE)
+
+
+```
+

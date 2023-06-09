@@ -31,8 +31,12 @@ os_lat_lon_to_grid <- function(lat, lon){
 
   osgrid <- import("OSGridConverter")
 
+ ll <- osgrid$grid2latlong("TL4871")
   grid <- osgrid$latlong2grid(lat, lon)
   r <- py_to_r(grid) |>
+    as.character()
+
+  py_to_r(ll) |>
     as.character()
 
   r <- paste0(stringr::str_sub(r[1], 1, 2), stringr::str_sub(r[1], 4,7))
@@ -40,4 +44,18 @@ os_lat_lon_to_grid <- function(lat, lon){
 
 }
 
+r <- paste0(stringr::str_sub(ll[1], 1, 2), stringr::str_sub(ll[1], 4,7))
 
+lon <- 0.1767
+lat <- 52.3172
+
+point <- data.frame(lon, lat) |> st_as_sf(coords = c("lon", "lat"), crs = 4326) |> st_transform(27700)
+buffer <- st_buffer(point, 1000)
+
+get_nbn_buffer(lon, lat) |>
+  filter(str_detect(species, "Strept")) |>
+  select(species, contains("decimal"), year) |>
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = 4326) |>
+  st_transform(27700) |>
+  mapview(zcol = "year") +
+  mapview(buffer)
