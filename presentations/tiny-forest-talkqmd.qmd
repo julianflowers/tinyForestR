@@ -1,0 +1,65 @@
+---
+title: "Tiny Forest talk"
+format: 
+  html:
+    toc: true
+    toc-location: right
+date: "`r Sys.Date()`"
+author: "Julian Flowers"
+editor: visual
+execute: 
+  echo: false
+  message: false
+  warning: false
+  cache: true
+---
+
+## Introduction
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## What is a Tiny Forest?
+
+When you click the **Render** button a document will be generated that includes:
+
+-   Content authored with markdown
+-   Output from executable code
+
+## Development
+
+```{r animated-map, fig.height=6, fig.width=6}
+
+
+library(needs)
+library(tinyForestR); needs(gganimate, tidyverse, ggmap)
+tf <- get_tf_data()
+
+tf <- tf |>
+  mutate(q = zoo::as.yearqtr(date), 
+         year = year(date))
+  
+ggmap::register_google("AIzaSyAMFHmy6Z9ny7nnCywAxMyM4OwWFqLu37w")
+
+ggmap::get_googlemap(center = c(lon = -1, lat = 53.8),
+                       zoom = 6, maptype = "roadmap") |>
+  ggmap() -> p
+
+p +
+  geom_jitter(aes(x = lon, y = lat, group = seq_along(year), colour = factor(year)), data = tf, size = 2) +
+  transition_states(year) +
+  ggtitle('Date {closest_state}')
+
+  
+
+
+```
+
+## Images
+
+![](images/tf_-1.37191750.964583.png){width="301"}
+
+![](images/tf_-1.05382452.647034.png){fig-align="right" width="300"}
+
+![](images/tf_-0.025264151.4515009.png){width="300"}
+
+![](images/tf_-1.17413952.632139.png){fig-align="right" width="300"}
