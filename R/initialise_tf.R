@@ -21,6 +21,8 @@ initialise_tf <- function(){
   library(needs)
   needs(tidyverse)
 
+
+  ## create virtual envinronent called `tinyforest`
   #virtualenv_remove("tinyforest")
   virtualenv_create("tinyforest")
   Sys.setenv(RETICULATE_PYTHON = "/Users/julianflowers/.virtualenvs/tinyforest/bin/python")
