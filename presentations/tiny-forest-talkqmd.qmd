@@ -38,7 +38,7 @@ tf <- tf |>
   mutate(q = zoo::as.yearqtr(date), 
          year = year(date))
   
-ggmap::register_google("AIzaSyAMFHmy6Z9ny7nnCywAxMyM4OwWFqLu37w")
+ggmap::register_google("xxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 
 ggmap::get_googlemap(center = c(lon = -1, lat = 53.8),
                        zoom = 6, maptype = "roadmap") |>
