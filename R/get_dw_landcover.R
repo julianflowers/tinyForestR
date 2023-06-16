@@ -36,7 +36,7 @@
 #' get_dw_landcover()
 #'
 #' # Get data for a specific location and buffer distance
-#' get_dw_landcover(tf = "JPL-1", lon = -118.2426, lat = 34.0522, dist = 1000)
+#' get_dw_landcover(tf = "85", lon = -1.472293, lat = 51.78398, dist = 1000)
 #' }
 #'
 #' @export
@@ -85,9 +85,6 @@ get_dw_landcover <- function(tf = tf_id, lon = 0.0969, lat = 51.578, dist = 500,
   #palette <- colorRampPalette(pal)
 
   raster <- ee_as_raster(image = s2$mode()$clip(buff), region = buff, scale = 1, via = "drive")
-
-  plot(raster, col = pal)
-
 
   dw_df <- raster |>
     terra::as.data.frame() |>

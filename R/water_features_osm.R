@@ -28,6 +28,7 @@ get_water_features <- function(df, tf_id = 85, buffer = 1000){
   require(sf)
   require(tidyverse)
   library(mapview)
+  require(osmdata)
 
   id <- tf_id
   buffer <- buffer
@@ -63,3 +64,5 @@ get_water_features <- function(df, tf_id = 85, buffer = 1000){
   out <- list(d = tf_w, b = tf_buffer)
 
 }
+
+
