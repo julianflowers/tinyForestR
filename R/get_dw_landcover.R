@@ -23,13 +23,8 @@
 #' @import tidyrgee
 #' @importFrom tidyr drop_na
 #' @importFrom terra as.data.frame
-#' @importFrom terra as_raster
 #' @importFrom graphics plot
-#' @importFrom dplyr count
-#' @importFrom leaflet addLayer
-#' @importFrom leaflet setCenter
-#' @importFrom purrr pluck
-#'
+
 #' #' @examples
 #' \dontrun{
 #' # Get data for the default location
