@@ -6,7 +6,7 @@
 #' @import reticulate
 #' @import dplyr
 #'
-#' @return No explicit output, but this function creates and configures the required environment for TinyForest
+#' @return No explicit output, but this function creates and configures the required environment for TinyForest.
 #'
 #' @examples
 #' initialize_tf()
