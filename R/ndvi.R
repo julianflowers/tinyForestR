@@ -3,12 +3,13 @@
 #' This function takes in a latitude, longitude, buffer distance, start and end time period, and cloud cover percentage,
 #' and returns a map of NDVI within the buffer region, along with statistics on the NDVI values within the buffer.
 #'
-#' @param lat Numeric. The latitude of the point location of interest.
-#' @param lon Numeric. The longitude of the point location of interest.
-#' @param dist Numeric. The distance in meters to draw a buffer around the point location.
-#' @param start_date Character. The start date in the format 'YYYY-MM-DD' for the time period of interest.
-#' @param end_date Character. The end date in the format 'YYYY-MM-DD' for the time period of interest.
-#' @param cloud_cover Numeric. The maximum allowable percentage of cloud cover in the satellite imagery used to calculate the NDVI. Default is 10.
+#' @param dist1 A numeric indicating the buffer distance in meters around the point of interest. Default is 1000.
+#' @param dist2 A numeric indicating the buffer distance in meters around the point used to filter the image collection. Default is 50.
+#' @param start_date A character indicating the start date of the image collection in the format 'YYYY-MM-DD'. Default is '2021-01-01'.
+#' @param end_date A character indicating the end date of the image collection in the format 'YYYY-MM-DD'. Default is '2021-12-31'.
+#' @param cloud_cover A numeric indicating the maximum percentage of cloudy pixels allowed in the image collection. Default is 10.
+#' @param tf_id An optional#' parameter indicating an ID or name for the point of interest. Default is NULL.
+#'
 #'
 #' @return A list object containing the following components:
 #' map: A map with two layers displaying the NDVI and the input point location.
@@ -16,12 +17,23 @@
 #' raster: A raster layer object of the NDVI values within the buffer region.
 #' ndvi_stats: Summary statistics of the NDVI values within the buffer region, including median, minimum, maximum, mean and standard deviation.
 #'
-#' @import reticulate rgee tidyrgee zoo terra
+#' @importFrom reticulate import
+#' @importFrom rgee ee_Initialize
+#' @importFrom tidyrgee as_tidyee ee_extract_tidy
+#' @importFrom zoo zoo
+#' @import terra
+#'
 #' @export
 #'
-#' @examples
-#' calc_ndvi_buff(lat = 25.1972, lon = 55.2744, dist = 500, start_date = '2021-01-01',
-#' end_date = '2021-12-31',cloud_cover = 10)
+##' @examples
+#'
+#' # Calculate NDVI and its summary statistics within a buffer and a point of interest for default parameters
+#' calc_ndvi_buff()
+#'
+#' @seealso
+#' \code{\link{as_tidyee}}, \code{\link{ee_extract_tidy}}
+#'
+#' @rdname calc_ndvi_buff
 #'
 #' @references
 #' - COPERNICUS/S2_SR_HARMONIZED image collection.
@@ -31,18 +43,29 @@
 #' - terra package documentation: https://rspatial.org/terr'
 
 
+# Define a function to calculate NDVI from satellite imagery using certain parameters
 
-calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date = "2021-01-01", end_date = "2021-12-31", cloud_cover = 10){
+calc_ndvi_buff <- function(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 50, start_date = "2019-01-01", end_date = "2022-12-31", cloud_cover = 10, tf_id = 85){
+
+  # Load necessary packages
 
   require(reticulate); require(rgee); require(tidyrgee); if(!require(zoo))install.packages("zoo")
   library(zoo)
   require(terra)
+  library(lubridate)
 
+  # Import Google Earth Engine Python module
   ee <- import("ee")
+
+  # Import geemap package for visualization
   geemap <- import("geemap")
+
+  # Import geedim package for Earth Engine data extraction
   geedim <- import("geedim")
 
   #ee_Authenticate()
+
+  # Initialize Google Earth Engine
   ee_Initialize(drive = TRUE)
 
   ## load image collection
@@ -54,9 +77,9 @@ calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date 
   lon <- lon
   lat <- lat
 
-
-  point <- ee$Geometry$Point(c(lon, lat))
-  buff <- ee$Geometry$Point(c(lon, lat))$buffer(dist)
+  # Define time range and cloud cover threshold for image collection filtering
+  point <- ee$Geometry$Point(c(lon, lat))$buffer(dist2)
+  buff <- ee$Geometry$Point(c(lon, lat))$buffer(dist1)
   start <- start_date
   end <- end_date
   ccover <- cloud_cover
@@ -66,40 +89,66 @@ calc_ndvi_buff <- function(lat = 25.1972, lon = 55.2744, dist = 500, start_date 
   s2 <- s2$filterDate(start, end)
   s2 <- s2$filter(ee$Filter$lt('CLOUDY_PIXEL_PERCENTAGE', ccover))
 
+
+  # Function to add NDVI band to an image
+
+  addNDVI <- function(image){
+    return(image$addBands(image$normalizedDifference(c('B8','B4'))$rename("ndvi")))
+  }
+
+  # Define color palette for NDVI visualization
   pal <- c(
     '#FFFFFF', '#CE7E45', '#DF923D', '#F1B555', '#FCD163', '#99B718', '#74A901',
     '#66A000', '#529400', '#3E8601', '#207401', '#056201', '#004C00', '#023B01',
     '#012E01', '#011D01', '#011301', "#000000")
 
-  palette <- colorRampPalette(pal)
 
-  raster <- ee_as_raster(image = s2$median()$clip(buff)$normalizedDifference(c("B8","B4")), region = buff, scale = 1, via = "drive"
-               )
+  # Apply the addNDVI function to each image in the image collection
+  ndvi <- s2$map(addNDVI)
 
-  ndvi_df <- raster |>
-    terra::as.data.frame() |>
-    drop_na()
+  # Extract the median, mean, and standard deviation of NDVI for each month from 2019 to 2023 at the defined point location
+  ndvi_yr_m <- ndvi |>
+    tidyrgee::as_tidyee() |>
+    select("ndvi") |>
+    filter(year %in% year(start):year(end)) |>
+    group_by(year, month) |>
+    summarise(stat=c("median", "mean", "sd")) |>
+    mutate(date = lubridate::make_date(year, month, day = 1L))
 
-  ndvi_stats <- raster |>
-    terra::as.data.frame() |>
-    drop_na() |>
-    summarise(med = median(nd),
-              min = min(nd),
-              max = max(nd),
-              mean = mean(nd),
-              sd = sd(nd))
+
+  # Extract the NDVI value at the defined point location for each month from 2019 to 2023
+  point_summary <- ndvi_yr_m |>
+    ee_extract_tidy(y = point,
+                    fun = "median",
+                    scale = 10) |>
+    mutate(tf_id = tf_id) |>
+    pivot_wider(names_from = "parameter", values_from = "value")
+
+  # Extract the median NDVI for each month from 2019 to 2023 within the defined buffer area
+  buffer_summary <- ndvi_yr_m |>
+    ee_extract_tidy(y = buff,
+                    fun = "median",
+                    scale = 10) |>
+    mutate(tf_id = tf_id) |>
+    pivot_wider(names_from = "parameter", values_from = "value")
 
 
   Map$setCenter(lon =lon, lat = lat, zoom = 15)
   map <- Map$addLayer(s2$median()$clip(buff)$normalizedDifference(c("B8","B4")),
-               visParams = list(min = -0.5, max = 1, palette = palette(15)), name = "NDVI") +
+                      visParams = list(min = -0.5, max = 1, palette = pal), name = "NDVI") +
     Map$addLayer(point, name = "TF")
 
-  s2_tidy <- tidyrgee::as_tidyee(s2)
 
-  out <- list(map = map, tidy_dates = s2_tidy, image_ids = s2_tidy$vrt |>
-                pluck("id"), raster = raster, ndvi_stats = ndvi_stats, ndvi_df = ndvi_df)
+  # Map$setCenter(lon =lon, lat = lat, zoom = 15)
+  # map <- Map$addLayer(s2$median()$clip(buff)$normalizedDifference(c("B8","B4")),
+  #              visParams = list(min = -0.5, max = 1, palette = palette(15)), name = "NDVI") +
+  #   Map$addLayer(point, name = "TF")
+  #
+  # s2_tidy <- tidyrgee::as_tidyee(s2)
 
+  # Create output object containing NDVI summary statistics for the defined point and buffer locations, plot, and tidy NDVI data
+  out <- list(map = map, point_summary = point_summary,  buffer_summary= buffer_summary,
+              tidy_ndvi = ndvi_yr_m$vrt, tf_id = tf_id)
 
 }
 

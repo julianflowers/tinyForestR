@@ -25,7 +25,7 @@
 #' @importFrom terra as.data.frame
 #' @importFrom graphics plot
 
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' # Get data for the default location
 #' get_dw_landcover()

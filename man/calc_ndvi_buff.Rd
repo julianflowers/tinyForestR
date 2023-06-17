@@ -5,26 +5,28 @@
 \title{Calculate normalized difference vegetation index (NDVI) within a buffer around a point location}
 \usage{
 calc_ndvi_buff(
-  lat = 25.1972,
-  lon = 55.2744,
-  dist = 500,
-  start_date = "2021-01-01",
-  end_date = "2021-12-31",
-  cloud_cover = 10
+  lon = -1.469,
+  lat = 51.7779,
+  dist1 = 1000,
+  dist2 = 50,
+  start_date = "2019-01-01",
+  end_date = "2022-12-31",
+  cloud_cover = 10,
+  tf_id = 85
 )
 }
 \arguments{
-\item{lat}{Numeric. The latitude of the point location of interest.}
+\item{dist1}{A numeric indicating the buffer distance in meters around the point of interest. Default is 1000.}
 
-\item{lon}{Numeric. The longitude of the point location of interest.}
+\item{dist2}{A numeric indicating the buffer distance in meters around the point used to filter the image collection. Default is 50.}
 
-\item{dist}{Numeric. The distance in meters to draw a buffer around the point location.}
+\item{start_date}{A character indicating the start date of the image collection in the format 'YYYY-MM-DD'. Default is '2021-01-01'.}
 
-\item{start_date}{Character. The start date in the format 'YYYY-MM-DD' for the time period of interest.}
+\item{end_date}{A character indicating the end date of the image collection in the format 'YYYY-MM-DD'. Default is '2021-12-31'.}
 
-\item{end_date}{Character. The end date in the format 'YYYY-MM-DD' for the time period of interest.}
+\item{cloud_cover}{A numeric indicating the maximum percentage of cloudy pixels allowed in the image collection. Default is 10.}
 
-\item{cloud_cover}{Numeric. The maximum allowable percentage of cloud cover in the satellite imagery used to calculate the NDVI. Default is 10.}
+\item{tf_id}{An optional#' parameter indicating an ID or name for the point of interest. Default is NULL.}
 }
 \value{
 A list object containing the following components:
@@ -38,8 +40,9 @@ This function takes in a latitude, longitude, buffer distance, start and end tim
 and returns a map of NDVI within the buffer region, along with statistics on the NDVI values within the buffer.
 }
 \examples{
-calc_ndvi_buff(lat = 25.1972, lon = 55.2744, dist = 500, start_date = '2021-01-01',
-end_date = '2021-12-31',cloud_cover = 10)
+
+# Calculate NDVI and its summary statistics within a buffer and a point of interest for default parameters
+calc_ndvi_buff()
 
 }
 \references{
@@ -50,4 +53,7 @@ end_date = '2021-12-31',cloud_cover = 10)
 \item zoo package documentation: https://cran.r-project.org/web/packages/zoo/index.html
 \item terra package documentation: https://rspatial.org/terr'
 }
+}
+\seealso{
+\code{\link{as_tidyee}}, \code{\link{ee_extract_tidy}}
 }

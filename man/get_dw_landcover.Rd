@@ -40,3 +40,13 @@ list: a list containing the following items:
 \description{
 Downloads the image collection from the Dynamic World Land Cover (DW) dataset on Google Earth Engine (GEE) platform, filters it using a given location and time frame, and returns the land cover statistics for the given area.
 }
+\examples{
+\dontrun{
+# Get data for the default location
+get_dw_landcover()
+
+# Get data for a specific location and buffer distance
+get_dw_landcover(tf = "85", lon = -1.472293, lat = 51.78398, dist = 1000)
+}
+
+}
