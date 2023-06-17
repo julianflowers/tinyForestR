@@ -7,7 +7,7 @@
 initialise_tf()
 }
 \value{
-No explicit output, but this function creates and configures the required environment for TinyForest
+No explicit output, but this function creates and configures the required environment for TinyForest.
 }
 \description{
 This function initializes the TinyForest environment with required dependencies and libraries.
