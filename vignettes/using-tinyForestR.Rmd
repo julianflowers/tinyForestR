@@ -265,7 +265,7 @@ test <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 80, st
 test1 <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 80, start_date = "2017-01-01", end_date = "2018-12-31", cloud_cover = 10, tf_id = 85)
 
 
-test$map | test1$map
+test$map + test1$map
 
 
 ```
