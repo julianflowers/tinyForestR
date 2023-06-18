@@ -3,9 +3,9 @@ Title: Extract, manipulate and analyse data for Tiny Forests in the UK
 Version: 0.0.0.9000
 Authors@R: 
     person("Julian", "Flowers", , "jrf128@student.aru.ac.uk", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0001-5262-4526"))
 Description: Extract, mainpulate and analyse biodiversity, ecological and environmental data for Tiny Forests and their surroundings.
-License: `use_gpl3_license()` 
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
@@ -21,3 +21,20 @@ Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
 LazyData: true
+Imports: 
+    data.table,
+    dplyr,
+    ggplot2,
+    janitor,
+    mapview,
+    needs,
+    osmdata,
+    pacman,
+    reticulate,
+    rgee,
+    rphylopic,
+    rvest,
+    stringr,
+    tidyr,
+    tidyrgee,
+    vegan

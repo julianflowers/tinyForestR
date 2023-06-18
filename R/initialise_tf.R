@@ -25,7 +25,7 @@ initialise_tf <- function(){
   ## create virtual envinronent called `tinyforest`
   #virtualenv_remove("tinyforest")
   virtualenv_create("tinyforest")
-  Sys.setenv(RETICULATE_PYTHON = "/Users/julianflowers/.virtualenvs/tinyforest/bin/python")
+  Sys.setenv(RETICULATE_PYTHON = reticulate::virtualenv_python("tinyforest"))
   use_virtualenv("tinyforest")
 
   py_install(c("earthengine-api", "geemap", "osdatahub", "OSGridConverter", "geedim", "plotly"),  pip = TRUE, envname = "tinyforest")
