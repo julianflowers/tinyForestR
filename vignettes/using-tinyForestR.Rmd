@@ -56,13 +56,14 @@ This:
 
 ### Install and initialise
 
-```{r setup}
+```{r setup, cache=FALSE}
 if(!require("tinyForestR"))
-devtools::install_github("julianflowers/tinyForestR", force = TRUE)
+#devtools::install_github("julianflowers/tinyForestR", force = FALSE)
 if(!require("pacman"))install.packages("pacman")
+library(pacman)
 library(tinyForestR)
 
-p_load(leaflet.extras2, tidyverse, mapview, sf, ggmap, lubridate)
+p_load(leaflet.extras2, tidyverse, mapview, sf, ggmap, lubridate, geojsonio)
 
 initialise_tf()
 ```
@@ -71,13 +72,6 @@ initialise_tf()
 
 The next step is to load Tiny Forest (TF) data. Because this only exists in a series of web pages the `get_tf_data` function identifies the relevant pages and iterates over them to extract name, id, location, area, planters, and types of tree planted (as a list column), for those TFs planted at the time of extraction. It does include TFs planted outside the UK. The function takes about 30 seconds to iterate over all the relevant pages.
 
-```{r get-tf-data, eval= FALSE}
-
-tictoc::tic()
-tf_data <- get_tf_data()
-tictoc::toc()
-
-```
 
 ```{r, tf_data}
 
@@ -145,7 +139,7 @@ tf_df |>
   distinct() |>
   mutate(year = factor(year)) |>
   sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
-  mapview(zcol = "year")
+  mapview::mapview(zcol = "year")
 
 ```
 
@@ -263,15 +257,15 @@ The function returns a list including, image dates, NDVI statistics for the imag
 
 The code chunk below calculates the NDVI for each image containing the buffer around the Witney TF for 2019 and 2022 and maps them side-by-side. (Note, the function selects only those S2 images with cloud cover \< 10%).
 
-```{r ndvi-images, eval=FALSE, cache=TRUE}
+```{r ndvi-images, eval=TRUE , cache=TRUE}
 
-test <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 50, start_date = "2019-01-01", end_date = "2022-12-31", cloud_cover = 10, tf_id = 85)
-
-
-test1 <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 50, start_date = "2017-01-01", end_date = "2018-12-31", cloud_cover = 10, tf_id = 85)
+test <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 80, start_date = "2019-01-01", end_date = "2022-12-31", cloud_cover = 10, tf_id = 85)
 
 
-ndvi_2019$map | ndvi_2022$map
+test1 <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 80, start_date = "2017-01-01", end_date = "2018-12-31", cloud_cover = 10, tf_id = 85)
+
+
+test$map | test1$map
 
 
 ```
