@@ -2,7 +2,7 @@
 title: "How to use the `tinyForestR` package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{How to use the tinyForestR pacakge}
+  %\VignetteIndexEntry{How to use the tinyForestR package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
