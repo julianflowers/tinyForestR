@@ -54,6 +54,9 @@ get_tf_data <- function(){
     # Remove any NA values from the data frame
     drop_na()
 
+  tf_df |>
+    filter(tf_id == 343) |>
+    select(url)
 
 
   # Define a function to create a table of information for each tiny forest
@@ -77,12 +80,13 @@ get_tf_data <- function(){
   # to each tiny forest in the data frame and combine the results into a single data frame
   tf_table <- map_dfr(1:nrow(links), ~(create_tf_table(tf_df, .x)))
 
-
+  create_tf_table(tf_df, 183)
 
 
   # Subset the data frame to only include information
   # for tiny forests that have at least 4 pieces of information
   tf_table_planted <- tf_table |>
+    slice(-c(36, 894)) |>
     group_by(tf_id) |>
     left_join(tf_df, by = "tf_id") |>
     mutate(n = n(),
@@ -96,6 +100,11 @@ get_tf_data <- function(){
                               id == 3 & n == 4 ~ "trees",
                               id == 4 & n == 5 ~ "trees",
                               TRUE ~ "gps"))
+
+
+  # tf_table_planted |>
+  #   filter(tf_id == 92)
+  #   reactable::reactable(filterable = TRUE, selection = "multiple", pageSizeOptions = 100)
 
   # Reformat the data frame to be in a tidy format
   tf_table_tidy <- tf_table_planted |>

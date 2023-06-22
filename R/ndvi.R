@@ -135,8 +135,8 @@ calc_ndvi_buff <- function(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 50
 
   Map$setCenter(lon =lon, lat = lat, zoom = 15)
   map <- Map$addLayer(s2$median()$clip(buff)$normalizedDifference(c("B8","B4")),
-                      visParams = list(min = -0.5, max = 1, palette = pal), name = "NDVI") +
-    Map$addLayer(point, name = "TF")
+                      visParams = list(min = -0.5, max = 1, palette = pal), name = paste(start_date, end_date)) +
+    Map$addLayer(point, visParams = list(min = -0.5, max = 1, palette = pal), name = "TF")
 
 
   # Map$setCenter(lon =lon, lat = lat, zoom = 15)
