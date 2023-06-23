@@ -5,35 +5,31 @@
 #' @param lon longitude of the center of the image
 #' @param lat latitude of the center of the image
 #' @param key Google API key for ggmap imagery
+#' @param zoom degree of zoom of image; default = 15
+#' @param tf_id earthwatch id of Tiny Forest
 #'
 #' @import ggmap
 #' @import tidyverse
-#' @import sf
-#' @import here
-#' @import lubridate
-#' @import vegan
-#' @import data.table
-#' @import mapview
 #'
 #' @examples
-#' save_ggmap_images(-71.0636, 42.3581, "API_key")
+#' get_ggmap_images(-71.0636, 42.3581, "API_key", zoom=19)
 #'
 #' @export
 
 
 
-save_ggmap_images<- function(lon, lat, key){
+get_tf_images <- function(lon, lat, key, zoom = 15, tf_id){
 
-  Sys.setenv(GGMAP_GOOGLE_API_KEY= key)
+  Sys.setenv(GGMAP_GOOGLE_API_KEY = key)
   library(needs)
-  needs(ggmap, tidyverse, sf, here, lubridate, vegan, data.table, mapview)
+  needs(ggmap, tidyverse)
   ggmap::register_google(key)
   ggmap::get_googlemap(center = c(lon = lon, lat = lat),
-                       zoom = 15, maptype = "satellite") |>
+                       zoom = zoom, maptype = "satellite", messaging = TRUE) |>
   ggmap() -> p
 
 
-  ggsave(paste0(here::here(), "/images/tf_", lon, lat, ".png"), p)
+  ggsave(paste0(here::here(), "/images/tf_", tf_id,"_", lon, "-", lat, "-", Sys.Date(), "zoom=", zoom,  ".png"), p)
 
 }
 
