@@ -40,4 +40,15 @@ Imports:
     tidyfast,
     tidyr,
     tidyrgee,
-    vegan
+    vegan, 
+    stars,
+    devtools, 
+    ggmap, 
+    jsonlite, 
+    terra, 
+    tictoc,
+    myScrapers,
+    zoo,
+    tidyverse,
+    glue,
+    ggthemes

@@ -21,6 +21,9 @@
 #' @import reticulate
 #' @import rgee
 #' @import tidyrgee
+#' @import stars
+#' @import tidyrgee
+#' @import geemap
 #' @importFrom tidyr drop_na
 #' @importFrom terra as.data.frame
 #' @importFrom graphics plot
@@ -37,10 +40,11 @@
 #' @export
 
 
-get_dw_landcover <- function(tf = tf_id, lon = 0.0969, lat = 51.578, dist = 500, start_date = "2022-01-01", end_date = "2022-12-31"){
+get_dw_landcover <- function(tf_id = tf_id, lon = -1.469, lat = 51.234, dist = 1000, start_date = "2022-01-01", end_date = "2022-12-31"){
 
   require(reticulate); require(rgee); require(tidyrgee); if(!require(zoo))install.packages("zoo")
   library(zoo)
+  require(stars)
   require(terra)
   initialise_tf()
 
@@ -53,6 +57,7 @@ get_dw_landcover <- function(tf = tf_id, lon = 0.0969, lat = 51.578, dist = 500,
 
   ## load image collection
 
+
   ic <- ee$ImageCollection("GOOGLE/DYNAMICWORLD/V1")
 
   ## parameters
@@ -61,45 +66,26 @@ get_dw_landcover <- function(tf = tf_id, lon = 0.0969, lat = 51.578, dist = 500,
   lat <- lat
 
 
-  point <- ee$Geometry$Point(c(lon, lat))
+  point <- ee$Geometry$Point(c(lon, lat))$buffer(100)
   buff <- ee$Geometry$Point(c(lon, lat))$buffer(dist)
   start <- start_date
   end <- end_date
-  #ccover <- cloud_cover
-
-  ## image collection filters
-  s2 <- ic$filterBounds(buff)
-  s2 <- s2$filterDate(start, end)
-  s2 <- s2$select("label")
-  #s2 <- s2$filter(ee$Filter$lt('CLOUDY_PIXEL_PERCENTAGE', ccover))
 
   pal <- c(
     '#419bdf', '#397d49', '#88b053', '#7a87c6', '#e49653', '#dfc35a','#c42811',
     '#a59b8f', '#b39fe1')
 
-  #palette <- colorRampPalette(pal)
 
-  raster <- ee_as_raster(image = s2$mode()$clip(buff), region = buff, scale = 1, via = "drive")
 
-  dw_df <- raster |>
-    terra::as.data.frame() |>
-    drop_na()
-
-  lc_stats <- raster |>
-    terra::as.data.frame() |>
-    drop_na() |>
-    count(label)
+  dw_month_ts <- geemap$dynamic_world_timeseries(region = buff, start_date = start_date, end_date = end_date, cloud_pct = 10, frequency = "month", reducer = "mode" )
+  dw_tidy <- as_tidyee(dw_month_ts)
 
 
   Map$setCenter(lon =lon, lat = lat, zoom = 15)
-  map <- Map$addLayer(s2$median()$clip(buff),
-                      visParams = list(min = 0, max = 8, palette = pal), name = "DW", opacity = 0.6) +
-    Map$addLayer(point, name = "TF")
+  map <- Map$addLayer(dw_month_ts$mode(), opacity = 0.6)
 
-  s2_tidy <- tidyrgee::as_tidyee(s2)
 
-  out <- list(map = map, image_dates = s2_tidy$vrt$date, image_ids = s2_tidy$vrt$id |>
-                pluck("id"), raster = raster, lc_stats = lc_stats, dw_df = dw_df, tf_id = tf, buffer = dist)
+  out <- list(map = map, image_dates = dw_tidy$vrt$date, tf_id = tf_id, buffer = dist)
 
 
 }
