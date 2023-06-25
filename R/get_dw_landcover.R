@@ -2,7 +2,7 @@
 #'
 #' Downloads the image collection from the Dynamic World Land Cover (DW) dataset on Google Earth Engine (GEE) platform, filters it using a given location and time frame, and returns the land cover statistics for the given area.
 #'
-#' @param tf text: specify which TerraFusion site ID to use, defaults to tf_id
+#' @param tf_id text: specify which Tiny Forest site ID to use, defaults to tf_id
 #' @param lon numeric: longitude of the center of the area of interest, defaults to 0.0969
 #' @param lat numeric: latitude of the center of the area of interest, defaults to 51.578
 #' @param dist numeric: distance around the center point to create a circular buffer in meters, defaults to 500
@@ -11,11 +11,6 @@
 #' @return list: a list containing the following items:
 #' \item{map}{a map object showing the image collection and area of interest}
 #' \item{image_dates}{vector of image dates in the collection}
-#' \item{#' image_ids}{vector of image IDs in the collection}
-#' \item{raster}{a cropped raster object showing the land cover statistics for the area of interest}
-#' \item{lc_stats}{a data frame containing the land cover class counts for the area of interest}
-#' \item{dw_df}{a data frame containing all the land cover data for the area of interest}
-#' \item{tf_id}{the TerraFusion site ID used}
 #' \item{buffer}{the buffer distance used to select the area of interest}
 #'
 #' @import reticulate
@@ -33,7 +28,7 @@
 #' get_dw_landcover()
 #'
 #' # Get data for a specific location and buffer distance
-#' get_dw_landcover(tf = "85", lon = -1.472293, lat = 51.78398, dist = 1000)
+#' get_dw_landcover(tf_id= "85", lon = -1.472293, lat = 51.78398, dist = 1000)
 #' }
 #'
 #' @export

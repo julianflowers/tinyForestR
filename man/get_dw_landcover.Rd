@@ -5,16 +5,16 @@
 \title{Get land cover data from the Dynamic World Land Cover dataset for a given location}
 \usage{
 get_dw_landcover(
-  tf = tf_id,
-  lon = 0.0969,
-  lat = 51.578,
-  dist = 500,
+  tf_id = tf_id,
+  lon = -1.469,
+  lat = 51.234,
+  dist = 1000,
   start_date = "2022-01-01",
   end_date = "2022-12-31"
 )
 }
 \arguments{
-\item{tf}{text: specify which TerraFusion site ID to use, defaults to tf_id}
+\item{tf_id}{text: specify which Tiny Forest site ID to use, defaults to tf_id}
 
 \item{lon}{numeric: longitude of the center of the area of interest, defaults to 0.0969}
 
@@ -30,11 +30,6 @@ get_dw_landcover(
 list: a list containing the following items:
 \item{map}{a map object showing the image collection and area of interest}
 \item{image_dates}{vector of image dates in the collection}
-\item{#' image_ids}{vector of image IDs in the collection}
-\item{raster}{a cropped raster object showing the land cover statistics for the area of interest}
-\item{lc_stats}{a data frame containing the land cover class counts for the area of interest}
-\item{dw_df}{a data frame containing all the land cover data for the area of interest}
-\item{tf_id}{the TerraFusion site ID used}
 \item{buffer}{the buffer distance used to select the area of interest}
 }
 \description{
@@ -46,7 +41,7 @@ Downloads the image collection from the Dynamic World Land Cover (DW) dataset on
 get_dw_landcover()
 
 # Get data for a specific location and buffer distance
-get_dw_landcover(tf = "85", lon = -1.472293, lat = 51.78398, dist = 1000)
+get_dw_landcover(tf_id= "85", lon = -1.472293, lat = 51.78398, dist = 1000)
 }
 
 }

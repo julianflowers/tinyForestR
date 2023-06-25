@@ -49,7 +49,7 @@ get_water_features <- function(df, tf_id = 85, buffer = 1000){
     st_bbox()
 
   wq <- opq(bbox = tf_bbox) %>%
-    add_osm_feature(key = "water", value = c("lagoon", "lake", "pond", "reservoir", "river"))
+    add_osm_feature(key = "water", value = c("lagoon", "lake", "pond", "reservoir", "river", "basin", "stream_pool", "oxbow"))
 
   wd <- osmdata_sf(wq)
 
@@ -64,5 +64,7 @@ get_water_features <- function(df, tf_id = 85, buffer = 1000){
   out <- list(d = tf_w, b = tf_buffer)
 
 }
+
+
 
 
