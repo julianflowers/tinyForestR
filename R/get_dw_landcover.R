@@ -23,7 +23,6 @@
 #' @import tidyrgee
 #' @import stars
 #' @import tidyrgee
-#' @import geemap
 #' @importFrom tidyr drop_na
 #' @importFrom terra as.data.frame
 #' @importFrom graphics plot
