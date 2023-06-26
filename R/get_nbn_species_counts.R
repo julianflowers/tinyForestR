@@ -33,4 +33,3 @@ get_species_counts <- function(lon, lat, taxa, radius = 1, pageSize=1000){
 }
 
 
-

@@ -4,7 +4,7 @@
 \alias{get_species_counts}
 \title{This function takes a longitude, latitude, taxa, and optional search radius and returns a data frame with the species, count, and other information for records found on the NBN Atlas.}
 \usage{
-get_species_counts(lon, lat, taxa, radius = 1)
+get_species_counts(lon, lat, taxa, radius = 1, pageSize = 1000)
 }
 \arguments{
 \item{lon}{Longitude of centre point for search}
@@ -22,6 +22,6 @@ A data frame of species counts with columns for scientific name, common name, co
 This function takes a longitude, latitude, taxa, and optional search radius and returns a data frame with the species, count, and other information for records found on the NBN Atlas.
 }
 \examples{
-get_species_counts( -1.394457, 50.936542, "Bombus terrestris" )
+get_species_counts( -1.394457, 50.936542, "Birds" )
 
 }
