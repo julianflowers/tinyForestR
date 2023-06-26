@@ -2,9 +2,10 @@
 title: "How to use the `tinyForestR` package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{How to use the tinyForestR package}
+  %\VignetteIndexEntry{How to use the `tinyForestR` package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
@@ -17,6 +18,9 @@ knitr::opts_chunk$set(
   fig.width = 8, 
   fig.height = 6
 )
+
+
+
 
 ```
 
@@ -65,13 +69,14 @@ library(tinyForestR)
 
 p_load(leaflet.extras2, tidyverse, mapview, sf, ggmap, lubridate, geojsonio)
 
+theme_set(ggthemes::theme_economist())
+
 initialise_tf()
 ```
 
 ## Load Tiny Forest data
 
 The next step is to load Tiny Forest (TF) data. Because this only exists in a series of web pages the `get_tf_data` function identifies the relevant pages and iterates over them to extract name, id, location, area, planters, and types of tree planted (as a list column), for those TFs planted at the time of extraction. It does include TFs planted outside the UK. The function takes about 30 seconds to iterate over all the relevant pages.
-
 
 ```{r, tf_data}
 
@@ -157,9 +162,19 @@ tf_df |>
   ggplot() +
   geom_col(aes(n, reorder(trees, n))) +
   labs(y = "", 
-       title = "25 most commonly planted tree species") +
-  ggthemes::theme_base() +
+       title = "25 most commonly planted tree species", 
+       x = "Number of trees") +
+ # ggthemes::theme_base() +
   theme(plot.title.position = "plot")
+
+tf_df |>
+  ungroup() |>
+  unnest("trees") |>
+  count(tf_id, trees, sort = TRUE) |>
+  pivot_wider(names_from = trees, values_from = n, values_fill = 0) 
+  
+  
+  
 
 ```
 
@@ -245,7 +260,6 @@ metrics$plot +
          subtitle = paste("Aves", tf1$tf_id[1]), 
        y = "Richness", 
        x = "Month") +
-  ggthemes::theme_base() +
   theme(plot.title.position = "plot")
 ```
 
@@ -259,19 +273,94 @@ The code chunk below calculates the NDVI for each image containing the buffer ar
 
 ```{r ndvi-images, eval=TRUE , cache=TRUE}
 
-test <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 80, start_date = "2019-01-01", end_date = "2022-12-31", cloud_cover = 10, tf_id = 85)
+lon <- df$lon |> 
+  unique()
+
+lat <- df$lat |> 
+  unique()
+
+tf_id <- df$tf_id |> 
+  unique()
+
+plant_date <- df$date |>
+  unique()
+
+i <- 10
+
+test <- calc_ndvi_buff(lon = lon[i], lat = lat[i], dist1 = 1000, dist2 = 100, start_date = as.character(plant_date[2]), end_date = "2023-06-01", cloud_cover = 10, tf_id = tf_id[i])
 
 
-test1 <- calc_ndvi_buff(lon = -1.469, lat = 51.7779, dist1 = 1000, dist2 = 80, start_date = "2017-01-01", end_date = "2018-12-31", cloud_cover = 10, tf_id = 85)
+test1 <- calc_ndvi_buff(lon = lon[i],  lat =  lat[i], dist1 = 1000, dist2 = 100, start_date = "2017-01-01", end_date = as.character(plant_date[2]), cloud_cover = 10, tf_id = tf_id[i])
 
 
-test$map + test1$map
+test1$map | test$map
 
 
 ```
 
-## Environmental and ecological variables
+## 
 
-I have included a snapshot with environmental variables for the TF dataset. This includes the age of the TF, rural-urban classification of the lower super output area containing the TF centroid, the area (m^2^) of public parks and allotments in the buffer taken from OS Open Greenspace data, and the area (m^2^) of deciduous woodland, taken from Priority Habitat Inventory data.
+```{r}
+
+pre <- test1$point_summary |>
+  mutate(period = "a-pre", 
+         loc = "point") |>
+  mutate_at(.vars = 3:5, scale)
+
+post <- test$point_summary |>
+  mutate(period = "b-post", 
+         loc = "point") |>
+  mutate_at(.vars = 3:5, scale)
+
+pre_buff <- test1$buffer_summary |>
+  mutate(period = "a-pre", 
+         loc = "buffer") |>
+  mutate_at(.vars = 3:5, scale)
+
+post_buff <- test$buffer_summary |>
+  mutate(period = "b-post", 
+         loc = "buffer") |>
+  mutate_at(.vars = 3:5, scale)
+
+points <- bind_rows(pre, post)
+buffers <- bind_rows(pre_buff, post_buff)
+
+overall <- bind_rows(points, buffers)
+
+overall |>  
+  ggplot() +
+  geom_boxplot(aes(loc, ndvi_mean, fill = period)) 
+
+overall |>
+  ggplot() +
+  geom_col(aes(date, ndvi_median, fill = loc), position = "dodge") +
+  geom_smooth(aes(date, ndvi_median, color = loc), method = "loess", span = 0.5) +
+  geom_vline(xintercept = as.Date(plant_date[i]), lty = "dotted") +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~ loc) +
+  labs(title = "Trend in scaled NDVI: 100m and 1000m from TF centroid",
+       subtitle = paste0("Tiny Forest ", tf_id[i], "; planted: ", plant_date[i]), 
+       x = "")
+```
+
+## Covariates
+
+TF specific:
+
+-   Size
+
+-   Tree diversity
+
+-   Age
+
+-   Urban / rural
+
+Area specific
+
+-   Green infrastructure (conducive to biodiversity)[@WOS:000882918000004; @WOS:000327304100013; @WOS:000572856700001; @WOS:000374275700069; @implemen; @jerome2018; @Van2020; @Felappi2020; @Yin2022; @Anderson2022][@burgess2015; @strategi; @jones2022]
+
+I have included a snapshotwith environmental variables for the TF dataset. This includes the age of the TF, rural-urban classification of the lower super output area containing the TF centroid, the area (m^2^) of public parks and allotments in the buffer taken from OS Open Greenspace data, and the area (m^2^) of deciduous woodland, taken from Priority Habitat Inventory data.
+
+### Typology of green infrastructure
 
 [^1]: Note this may sometimes time out depending on traffic on the NBN Atlas webservice

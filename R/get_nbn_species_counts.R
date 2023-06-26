@@ -13,18 +13,24 @@
 #' @importFrom jsonlite fromJSON
 #'
 #' @examples
-#' get_species_counts( -1.394457, 50.936542, "Bombus terrestris" )
+#' get_species_counts( -1.394457, 50.936542, "Birds" )
 #'
 #' @export
 
 
-get_species_counts <- function(lon, lat, taxa, radius = 1){
+get_species_counts <- function(lon, lat, taxa, radius = 1, pageSize=1000){
 
+  ##taxa <- str_replace_all(taxa, "\\s+", "%20%")
   base_url <- "https://records-ws.nbnatlas.org/explore/group/"
-  search_url <- glue::glue(base_url, taxa, "?lat=", {lat}, "&lon=", {lon}, "&radius=", {radius} )
+  search_url <- glue::glue(base_url, taxa, "?lat=", {lat}, "&lon=", {lon}, "&radius=", {radius}, "&pageSize=", pageSize )
 
   out <- jsonlite::fromJSON(search_url, simplifyDataFrame=TRUE)
 
   return(out)
 
+
+
 }
+
+
+
