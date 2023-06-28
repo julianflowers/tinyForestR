@@ -15,7 +15,8 @@ BugReports: https://github.com/julianflowers/tinyForestR/issues
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    sf
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Depends: 
@@ -35,7 +36,6 @@ Imports:
     rgee,
     rphylopic,
     rvest,
-    sf,
     stringr,
     tidyfast,
     tidyr,
