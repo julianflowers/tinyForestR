@@ -48,16 +48,18 @@ get_tf_data <- function(){
     # Add the URL to the data frame
     mutate(url = paste0("https://tinyforest.earthwatch.org.uk/", value),
            # Add a 'stub' column which removes some unnecessary text from the web address
-           stub = str_remove(value, "/tiny-forest-sites/8-tiny-forest/"),
+           stub = str_remove(value, "tiny-forest-sites/8-tiny-forest/"),
            # Add a tf_id column to identifyeach tiny forest
            tf_id = parse_number(stub)) |>
     # Remove any NA values from the data frame
     drop_na()
 
-  tf_df |>
-    filter(tf_id == 343) |>
-    select(url)
+  # tf_df |>
+  #   filter(tf_id == 343) |>
+  #   select(url)
 
+  # tf_df |>
+  #   print(n = 216)
 
   # Define a function to create a table of information for each tiny forest
   create_tf_table <- function(df, i){
@@ -80,13 +82,16 @@ get_tf_data <- function(){
   # to each tiny forest in the data frame and combine the results into a single data frame
   tf_table <- map_dfr(1:nrow(links), ~(create_tf_table(tf_df, .x)))
 
-  create_tf_table(tf_df, 183)
+  tf_table |>
+    DT::datatable(options = list(pageLength = 100))
+
+  # create_tf_table(tf_df, 183)
 
 
   # Subset the data frame to only include information
   # for tiny forests that have at least 4 pieces of information
   tf_table_planted <- tf_table |>
-    slice(-c(36, 894)) |>
+    slice(-c(41)) |>
     group_by(tf_id) |>
     left_join(tf_df, by = "tf_id") |>
     mutate(n = n(),
@@ -102,34 +107,34 @@ get_tf_data <- function(){
                               TRUE ~ "gps"))
 
 
-  # tf_table_planted |>
+  tf_table_planted |>
   #   filter(tf_id == 92)
-  #   reactable::reactable(filterable = TRUE, selection = "multiple", pageSizeOptions = 100)
+    reactable::reactable(filterable = TRUE, selection = "multiple", pageSizeOptions = 100)
 
   # Reformat the data frame to be in a tidy format
-  tf_table_tidy <- tf_table_planted |>
-    # Remove unnecessary columns
-    select(-c(n, name.x, id)) |>
-    # Reshape the data frame so each piece of information is in its own column
-    pivot_wider(names_from = "metric", values_from = "value.x", values_fn = list ) |>
-    unnest("gps") |>
-    #unnest("class area") |>
-    unnest("area") |>
-    unnest("plant_date") |>
-    unnest("trees") |>
-    select(-contains("class")) |>
-    mutate(date = dmy(plant_date),
-           area = parse_number(area),
-           trees = str_remove(trees, "Species Planted in the Forest:"),
-           gps = str_remove(gps, "GPS:")) |>
-    # Split the GPS column into separate latitude and longitude columns
-    separate(gps, c("lat", 'lon'), sep = ",\\s?") |>
-    # Split the trees column into separate values based on the "|" delimiter
-    mutate(trees = str_split(trees, "\\|"),
-           lat = as.numeric(lat),
-           lon = as.numeric(lon))
+  # tf_table_tidy <- tf_table_planted |>
+  #   # Remove unnecessary columns
+  #   select(-c(n, name.x, id)) |>
+  #   # Reshape the data frame so each piece of information is in its own column
+  #   pivot_wider(names_from = "metric", values_from = "value.x", values_fn = list ) |>
+  #   unnest("gps") |>
+  #   #unnest("class area") |>
+  #   unnest("area") |>
+  #   unnest("plant_date") |>
+  #   unnest("trees") |>
+  #   select(-contains("class")) |> DT::datatable()
+  #   mutate(date = dmy(plant_date),
+  #          area = parse_number(area),
+  #          trees = str_remove(trees, "Species Planted in the Forest:"),
+  #          gps = str_remove(gps, "GPS:")) |>
+  #   # Split the GPS column into separate latitude and longitude columns
+  #   separate(gps, c("lat", 'lon'), sep = ",\\s?") |>
+  #   # Split the trees column into separate values based on the "|" delimiter
+  #   mutate(trees = str_split(trees, "\\|"),
+  #          lat = as.numeric(lat),
+  #          lon = as.numeric(lon))
 
-  output <- list(ids = tf_df, tidy_rf = tf_table_tidy)
+  output <- list(id_table = tf_df, tidy_rf = tf_table_planted)
 
 
 }
